@@ -1,326 +1,437 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VANIX Workshop</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --accent: #38bdf8;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --danger: #ef4444;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text);
-      margin: 0;
-      padding: 16px;
-    }
-    h1, h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .tabs {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    .tab-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--accent);
-      color: var(--text);
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .tab-btn.active {
-      background: var(--accent);
-      color: #000;
-    }
-    .section {
-      display: none;
-    }
-    .section.active {
-      display: block;
-    }
-    .artist-card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    }
-    .artist-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .artist-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .artist-info h3 {
-      margin: 0;
-      font-size: 1.1rem;
-    }
-    .artist-price {
-      color: var(--accent);
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-    .specs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin: 10px 0;
-    }
-    .badge {
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--accent);
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-    }
-    .portfolio-link {
-      display: inline-block;
-      margin-top: 8px;
-      color: var(--accent);
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: var(--card-bg);
-      padding: 16px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-    }
-    input, textarea {
-      background: var(--bg-color);
-      border: 1px solid #334155;
-      color: var(--text);
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 1rem;
-    }
-    button.submit-btn {
-      background: var(--accent);
-      color: #000;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button.delete-btn {
-      background: var(--danger);
-      color: #fff;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-      width: 100%;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VANIX Workshop</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg: var(--tg-theme-bg-color, #121212);
+            --text: var(--tg-theme-text-color, #ffffff);
+            --hint: var(--tg-theme-hint-color, #aaaaaa);
+            --button: var(--tg-theme-button-color, #0088cc);
+            --button-text: var(--tg-theme-button-text-color, #ffffff);
+            --secondary-bg: var(--tg-theme-secondary-bg-color, #1e1e1e);
+            --accent: #2ea6ff;
+            --danger: #ff4d4d;
+            --success: #2ecc71;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 75px;
+        }
+
+        header {
+            padding: 16px;
+            text-align: center;
+            background-color: var(--secondary-bg);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        header h1 { margin: 0; font-size: 20px; }
+        header p { margin: 4px 0 0; color: var(--hint); font-size: 13px; }
+
+        .tab-content { 
+            display: none !important; 
+            padding: 16px; 
+        }
+        .tab-content.active { 
+            display: block !important; 
+        }
+
+        .card {
+            background-color: var(--secondary-bg);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+
+        .artist-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: #333;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 8px 0;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.08);
+            color: var(--accent);
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background-color: var(--button);
+            color: var(--button-text);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            box-sizing: border-box;
+            text-decoration: none;
+        }
+
+        .btn-secondary {
+            background-color: rgba(255,255,255,0.08);
+            color: var(--text);
+            margin-top: 8px;
+        }
+
+        .btn-success { background-color: var(--success); color: #fff; }
+        .btn-danger { background-color: var(--danger); color: #fff; }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0 12px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background-color: #2a2a2a;
+            color: #fff;
+            box-sizing: border-box;
+        }
+
+        .spec-checkboxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 6px 0 12px 0;
+        }
+
+        .spec-checkboxes label {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #2a2a2a;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--secondary-bg);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            z-index: 999;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--hint);
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .nav-item.active { color: var(--button); }
+        .nav-item span { font-size: 18px; }
+
+        #admin-nav { display: none; }
+    </style>
 </head>
 <body>
 
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('artists', this)">🎨 Артисты</button>
-    <button class="tab-btn" onclick="switchTab('apply', this)">📝 Стать мастером</button>
-    <button id="admin-tab-btn" class="tab-btn" style="display: none;" onclick="switchTab('admin', this)">👑 Админка</button>
-  </div>
+    <header>
+        <h1>VANIX Workshop</h1>
+        <p>Заказы Minecraft-услуг</p>
+    </header>
 
-  <!-- СЕКЦИЯ: СПИСОК АРТИСТОВ -->
-  <div id="artists" class="section active">
-    <h2>Мастера VANIX Workshop</h2>
-    <div id="artists-container">Загрузка мастеров...</div>
-  </div>
+    <!-- 1. ГЛАВНАЯ -->
+    <div id="home" class="tab-content active">
+        <div class="card">
+            <h3>🎨 Скины и 3D-модели</h3>
+            <p style="color: var(--hint); font-size: 13px;">Уникальные скины, текстуры и Blockbench модели любой сложности.</p>
+        </div>
+        <div class="card">
+            <h3>🗺️ Кастомные карты</h3>
+            <p style="color: var(--hint); font-size: 13px;">Спавны, хабы, арены и игровые миры под ключ.</p>
+        </div>
+        <div class="card">
+            <h3>📌 Путеводитель</h3>
+            <p style="color: var(--hint); font-size: 13px; line-height: 1.4;">
+                Во вкладке <b>«Мастера»</b> вы можете выбрать исполнителя под ваш бюджет и стилистику и сразу оформить заказ.<br><br>
+                Хотите работать у нас? Подайте заявку на артиста во вкладке <b>«Заявка»</b>!
+            </p>
+        </div>
+    </div>
 
-  <!-- СЕКЦИЯ: ФОРМА ЗАЯВКИ -->
-  <div id="apply" class="section">
-    <h2>Заявка на вступление</h2>
-    <form id="appForm">
-      <input type="text" id="name" placeholder="Ваш никнейм" required>
-      <input type="text" id="price" placeholder="Средняя цена (напр. от 500₽)" required>
-      <input type="url" id="portfolio" placeholder="Ссылка на портфолио" required>
-      <input type="text" id="specs" placeholder="Специализации (через запятую)" required>
-      <textarea id="desc" rows="3" placeholder="Описание ваших услуг" required></textarea>
-      <button type="submit" class="submit-btn">Отправить заявку</button>
-    </form>
-  </div>
+    <!-- 2. МАСТЕРА -->
+    <div id="creators" class="tab-content">
+        <div id="creators-list">Загрузка мастеров...</div>
+    </div>
 
-  <!-- СЕКЦИЯ: АДМИН-ПАНЕЛЬ -->
-  <div id="admin" class="section">
-    <h2>👑 Панель Администратора</h2>
+    <!-- 3. ЗАЯВКА НА АРТИСТА -->
+    <div id="apply" class="tab-content">
+        <div class="card">
+            <h3>📝 Заявка на артиста</h3>
+            <p style="color: var(--hint); font-size: 13px;">Заполните форму, чтобы вступить в команду VANIX Workshop.</p>
+            
+            <label style="font-size: 12px; color: var(--hint);">Имя / Никнейм *</label>
+            <input type="text" id="app-name" class="input-field" placeholder="Например: CraftMaster">
 
-    <form id="adminAddForm">
-      <h3 style="margin: 0; text-align: center;">➕ Добавить артиста</h3>
-      <input type="text" id="adm-name" placeholder="Никнейм артиста" required>
-      <input type="text" id="adm-price" placeholder="Средняя цена (напр. от 500₽)" required>
-      <input type="url" id="adm-portfolio" placeholder="Ссылка на портфолио" required>
-      <input type="text" id="adm-specs" placeholder="Специализации (через запятую)" required>
-      <textarea id="adm-desc" rows="3" placeholder="Описание услуг" required></textarea>
-      <button type="submit" class="submit-btn">Добавить в базу</button>
-    </form>
+            <label style="font-size: 12px; color: var(--hint);">Ссылка на аватарку (необязательно):</label>
+            <input type="text" id="app-avatar" class="input-field" placeholder="https://i.imgur.com/...">
 
-    <h3 style="text-align: center; margin-top: 24px;">🗑️ Удаление артистов</h3>
-    <div id="admin-artists-container">Загрузка мастеров...</div>
-  </div>
+            <label style="font-size: 12px; color: var(--hint);">Специализации *</label>
+            <div class="spec-checkboxes">
+                <label><input type="checkbox" name="spec" value="Map Maker"> Map Maker</label>
+                <label><input type="checkbox" name="spec" value="Builder"> Builder</label>
+                <label><input type="checkbox" name="spec" value="Skin Maker"> Skin Maker</label>
+                <label><input type="checkbox" name="spec" value="3D Modeler"> 3D Modeler</label>
+                <label><input type="checkbox" name="spec" value="Texture Artist"> Texture Artist</label>
+                <label><input type="checkbox" name="spec" value="2D Artist"> 2D Artist</label>
+                <label><input type="checkbox" name="spec" value="Animator"> Animator</label>
+                <label><input type="checkbox" name="spec" value="Plugin Dev"> Plugin Dev</label>
+            </div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+            <label style="font-size: 12px; color: var(--hint);">Средняя цена работы *</label>
+            <input type="text" id="app-price" class="input-field" placeholder="Например: от 400₽">
 
-    const ADMIN_ID = 6955345877; // Твой Telegram ID
-    const userId = tg.initDataUnsafe?.user?.id;
+            <label style="font-size: 12px; color: var(--hint);">Ссылка на портфолио (ТГК/Discord/GitHub) *</label>
+            <input type="text" id="app-portfolio" class="input-field" placeholder="https://t.me/your_channel">
 
-    // Включаем вкладку "Админка" только для администратора
-    if (userId === ADMIN_ID) {
-      document.getElementById('admin-tab-btn').style.display = 'inline-block';
-    }
+            <label style="font-size: 12px; color: var(--hint);">Описание / О себе:</label>
+            <textarea id="app-desc" class="input-field" rows="3" placeholder="Расскажите о вашем опыте..."></textarea>
 
-    function switchTab(tabName, btnElement) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      
-      document.getElementById(tabName).classList.add('active');
-      if (btnElement) {
-        btnElement.classList.add('active');
-      }
+            <button class="btn" onclick="sendArtistApplication()">Отправить заявку</button>
+        </div>
+    </div>
 
-      if (tabName === 'admin') {
-        loadAdminArtists();
-      }
-    }
+    <!-- 4. МОИ ЗАКАЗЫ -->
+    <div id="my-orders" class="tab-content">
+        <div class="card">
+            <h3>📋 Мои заказы</h3>
+            <div id="orders-list">
+                <p style="color: var(--hint); font-size: 13px;">У вас пока нет активных заказов.</p>
+            </div>
+        </div>
+    </div>
 
-    // Загрузка артистов для основной страницы
-    async function loadArtists() {
-      const container = document.getElementById('artists-container');
-      try {
-        const response = await fetch('artists.json?cache=' + Date.now());
-        if (!response.ok) throw new Error("Файл не найден");
-        const artists = await response.json();
+    <!-- 5. ПРОФИЛЬ -->
+    <div id="profile" class="tab-content">
+        <div class="card" style="text-align: center;">
+            <img class="avatar" id="user-avatar" src="https://via.placeholder.com/80" style="width: 80px; height: 80px; margin: 0 auto 10px auto;">
+            <h2 id="user-name" style="margin: 0; font-size: 18px;">Пользователь</h2>
+            <p id="user-status" style="color: var(--hint); font-size: 14px; margin-top: 4px;">Статус: Клиент</p>
+        </div>
+    </div>
 
-        if (artists.length === 0) {
-          container.innerHTML = "<p style='text-align:center;'>Список мастеров пока пуст.</p>";
-          return;
+    <!-- 6. АДМИН-ПАНЕЛЬ -->
+    <div id="admin" class="tab-content">
+        <div class="card">
+            <h3 style="color: var(--accent); margin-top: 0;">👑 Панель Администратора</h3>
+            <p style="color: var(--hint); font-size: 13px;">Управление списком мастеров из JSON:</p>
+            <div id="admin-creators-list">Загрузка мастеров...</div>
+        </div>
+    </div>
+
+    <!-- Навигация -->
+    <nav>
+        <button class="nav-item active" onclick="showTab('home', this)"><span>🏠</span>Главная</button>
+        <button class="nav-item" onclick="showTab('creators', this)"><span>🎨</span>Мастера</button>
+        <button class="nav-item" onclick="showTab('apply', this)"><span>📝</span>Заявка</button>
+        <button class="nav-item" onclick="showTab('my-orders', this)"><span>📋</span>Мои</button>
+        <button class="nav-item" onclick="showTab('profile', this)"><span>👤</span>Профиль</button>
+        <button id="admin-nav" class="nav-item" onclick="showTab('admin', this)"><span>👑</span>Админ</button>
+    </nav>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const ADMIN_ID = 6955345877;
+        let userPhoto = "https://via.placeholder.com/55";
+
+        // Авторизация Telegram
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const user = tg.initDataUnsafe.user;
+            document.getElementById('user-name').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            if (user.photo_url) {
+                userPhoto = user.photo_url;
+                document.getElementById('user-avatar').src = user.photo_url;
+            }
+            if (user.id === ADMIN_ID) {
+                document.getElementById('admin-nav').style.display = 'flex';
+                document.getElementById('user-status').innerText = 'Статус: Администратор 👑';
+            }
         }
 
-        container.innerHTML = artists.map(a => `
-          <div class="artist-card">
-            <div class="artist-header">
-              <img class="artist-avatar" src="${a.avatar || 'https://via.placeholder.com/60'}" alt="Avatar">
-              <div class="artist-info">
-                <h3>${a.name}</h3>
-                <div class="artist-price">${a.price}</div>
-              </div>
-            </div>
-            <div class="specs">
-              ${(a.specs || []).map(s => `<span class="badge">${s}</span>`).join('')}
-            </div>
-            <p style="margin: 8px 0; font-size: 0.9rem;">${a.desc}</p>
-            <a href="${a.portfolio}" target="_blank" class="portfolio-link">📁 Открыть портфолио</a>
-          </div>
-        `).join('');
-      } catch (err) {
-        container.innerHTML = "<p style='text-align:center;'>Не удалось загрузить список мастеров.</p>";
-      }
-    }
+        // Переключение вкладок
+        function showTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
 
-    // Загрузка артистов в админку с кнопкой удаления
-    async function loadAdminArtists() {
-      const container = document.getElementById('admin-artists-container');
-      try {
-        const response = await fetch('artists.json?cache=' + Date.now());
-        const artists = await response.json();
-
-        if (artists.length === 0) {
-          container.innerHTML = "<p style='text-align:center;'>Список мастеров пуст.</p>";
-          return;
+            if (tabId === 'creators') loadApprovedCreators();
+            if (tabId === 'admin') loadAdminCreators();
         }
 
-        container.innerHTML = artists.map((a, index) => `
-          <div class="artist-card">
-            <div class="artist-header">
-              <img class="artist-avatar" src="${a.avatar || 'https://via.placeholder.com/60'}" alt="Avatar">
-              <div class="artist-info">
-                <h3>${a.name}</h3>
-                <div class="artist-price">${a.price}</div>
-              </div>
-            </div>
-            <button class="delete-btn" onclick="deleteArtist(${index}, '${a.name}')">❌ Удалить мастера</button>
-          </div>
-        `).join('');
-      } catch (err) {
-        container.innerHTML = "<p style='text-align:center;'>Ошибка загрузки списка.</p>";
-      }
-    }
+        // Загрузка мастеров из файла artists.json
+        async function loadApprovedCreators() {
+            const container = document.getElementById('creators-list');
+            try {
+                const response = await fetch('artists.json?cache=' + Date.now());
+                const creators = await response.json();
 
-    // Удаление артиста (отправляет команду боту)
-    function deleteArtist(index, name) {
-      if (confirm(`Удалить артиста ${name}?`)) {
-        tg.sendData(JSON.stringify({
-          action: 'admin_delete_artist',
-          index: index,
-          name: name
-        }));
-        tg.close();
-      }
-    }
+                if (creators.length === 0) {
+                    container.innerHTML = "<p style='color: var(--hint); text-align:center;'>Список мастеров пока пуст.</p>";
+                    return;
+                }
 
-    // Добавление артиста вручную через админку
-    document.getElementById('adminAddForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const payload = {
-        action: 'admin_add_artist',
-        name: document.getElementById('adm-name').value,
-        price: document.getElementById('adm-price').value,
-        portfolio: document.getElementById('adm-portfolio').value,
-        specs: document.getElementById('adm-specs').value.split(',').map(s => s.trim()),
-        desc: document.getElementById('adm-desc').value,
-        avatar: 'https://via.placeholder.com/60'
-      };
+                container.innerHTML = creators.map(c => `
+                    <div class="card">
+                        <div class="artist-header">
+                            <img class="avatar" src="${c.avatar || 'https://via.placeholder.com/55'}" alt="Avatar">
+                            <div>
+                                <h3 style="margin: 0;">${c.name}</h3>
+                                <p style="color: var(--accent); font-size: 12px; margin: 2px 0;"><b>Средний чек:</b> ${c.price}</p>
+                            </div>
+                        </div>
+                        <div class="tags">
+                            ${(c.specs || []).map(s => `<span class="tag">${s}</span>`).join('')}
+                        </div>
+                        <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">${c.desc}</p>
+                        <a class="btn btn-secondary" href="${c.portfolio}" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
+                        <button class="btn" onclick="startOrder('${c.name}')">Заказать у него</button>
+                    </div>
+                `).join('');
+            } catch (err) {
+                container.innerHTML = "<p style='color: var(--hint); text-align:center;'>Не удалось загрузить мастеров.</p>";
+            }
+        }
 
-      tg.sendData(JSON.stringify(payload));
-      tg.close();
-    });
+        // Отправка заявки артиста бота (tg.sendData)
+        function sendArtistApplication() {
+            const name = document.getElementById('app-name').value.trim();
+            let avatar = document.getElementById('app-avatar').value.trim();
+            const price = document.getElementById('app-price').value.trim();
+            const portfolio = document.getElementById('app-portfolio').value.trim();
+            const desc = document.getElementById('app-desc').value.trim();
+            
+            let specs = [];
+            document.querySelectorAll('input[name="spec"]:checked').forEach(cb => specs.push(cb.value));
 
-    // Обычная заявка пользователя
-    document.getElementById('appForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const payload = {
-        type: 'artist_application',
-        name: document.getElementById('name').value,
-        price: document.getElementById('price').value,
-        portfolio: document.getElementById('portfolio').value,
-        specs: document.getElementById('specs').value.split(',').map(s => s.trim()),
-        desc: document.getElementById('desc').value,
-        avatar: 'https://via.placeholder.com/60'
-      };
+            if (!name || specs.length === 0 || !price || !portfolio) { 
+                alert('Пожалуйста, заполните все обязательные поля (*)!'); 
+                return; 
+            }
 
-      tg.sendData(JSON.stringify(payload));
-      tg.close();
-    });
+            const payload = {
+                action: 'artist_application',
+                name: name,
+                avatar: avatar || userPhoto,
+                specs: specs,
+                price: price,
+                portfolio: portfolio,
+                desc: desc || 'Описание не указано'
+            };
 
-    loadArtists();
-  </script>
+            tg.sendData(JSON.stringify(payload));
+            tg.close();
+        }
+
+        // Админка: загрузка мастеров с кнопкой удаления
+        async function loadAdminCreators() {
+            const container = document.getElementById('admin-creators-list');
+            try {
+                const response = await fetch('artists.json?cache=' + Date.now());
+                const creators = await response.json();
+
+                if (creators.length === 0) {
+                    container.innerHTML = "<p style='color: var(--hint); text-align:center;'>Список пуст.</p>";
+                    return;
+                }
+
+                container.innerHTML = creators.map((c, index) => `
+                    <div class="card" style="border: 1px solid rgba(255,255,255,0.1);">
+                        <div class="artist-header">
+                            <img class="avatar" src="${c.avatar || 'https://via.placeholder.com/55'}" alt="Avatar">
+                            <div>
+                                <h4 style="margin: 0;">${c.name}</h4>
+                                <p style="color: var(--accent); font-size: 12px; margin: 2px 0;">${c.price}</p>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger" onclick="deleteCreator(${index}, '${c.name}')">❌ Удалить из базы</button>
+                    </div>
+                `).join('');
+            } catch (err) {
+                container.innerHTML = "<p style='color: var(--hint); text-align:center;'>Ошибка загрузки.</p>";
+            }
+        }
+
+        // Удаление артиста (отправка в бота)
+        function deleteCreator(index, name) {
+            if (confirm(`Удалить артиста ${name}?`)) {
+                tg.sendData(JSON.stringify({
+                    action: 'admin_delete_artist',
+                    index: index,
+                    name: name
+                }));
+                tg.close();
+            }
+        }
+
+        // Создание заказа
+        function startOrder(artistName) {
+            const payload = {
+                action: 'create_order',
+                artist: artistName
+            };
+            tg.sendData(JSON.stringify(payload));
+            tg.close();
+        }
+
+        // Старт
+        loadApprovedCreators();
+    </script>
 </body>
 </html>
  
