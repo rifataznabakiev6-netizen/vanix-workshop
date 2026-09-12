@@ -35,8 +35,13 @@
         header h1 { margin: 0; font-size: 20px; }
         header p { margin: 4px 0 0; color: var(--hint); font-size: 13px; }
 
-        .tab-content { display: none; padding: 16px; }
-        .tab-content.active { display: block; }
+        .tab-content { 
+            display: none !important; 
+            padding: 16px; 
+        }
+        .tab-content.active { 
+            display: block !important; 
+        }
 
         .card {
             background-color: var(--secondary-bg);
@@ -98,7 +103,7 @@
             margin-top: 8px;
         }
 
-        .input-field, .select-field {
+        .input-field {
             width: 100%;
             padding: 10px;
             margin: 6px 0 12px 0;
@@ -155,6 +160,7 @@
             justify-content: space-around;
             align-items: center;
             border-top: 1px solid rgba(255,255,255,0.08);
+            z-index: 999;
         }
 
         .nav-item {
@@ -173,7 +179,7 @@
         .nav-item.active { color: var(--button); }
         .nav-item span { font-size: 18px; }
 
-        .admin-tab { display: none; }
+        #admin-nav { display: none; }
     </style>
 </head>
 <body>
@@ -243,13 +249,13 @@
             <h3>📝 Заявка на артиста</h3>
             <p style="color: var(--hint); font-size: 13px;">Заполните форму, чтобы вступить в команду VANIX Workshop.</p>
             
-            <label style="font-size: 12px; color: var(--hint);">Имя / Никнейм:</label>
+            <label style="font-size: 12px; color: var(--hint);">Имя / Никнейм *</label>
             <input type="text" id="app-name" class="input-field" placeholder="Например: CraftMaster">
 
-            <label style="font-size: 12px; color: var(--hint);">Ссылка на аватарку (если пусто — берем из Telegram):</label>
+            <label style="font-size: 12px; color: var(--hint);">Ссылка на аватарку (необязательно):</label>
             <input type="text" id="app-avatar" class="input-field" placeholder="https://i.imgur.com/...">
 
-            <label style="font-size: 12px; color: var(--hint);">Специализации (можно несколько):</label>
+            <label style="font-size: 12px; color: var(--hint);">Специализации (выберите хотя бы одну) *</label>
             <div class="spec-checkboxes">
                 <label><input type="checkbox" name="spec" value="Map Maker"> Map Maker</label>
                 <label><input type="checkbox" name="spec" value="Builder"> Builder</label>
@@ -263,10 +269,10 @@
                 <label><input type="checkbox" name="spec" value="Video Editor"> Video Editor</label>
             </div>
 
-            <label style="font-size: 12px; color: var(--hint);">Средняя цена работы:</label>
+            <label style="font-size: 12px; color: var(--hint);">Средняя цена работы *</label>
             <input type="text" id="app-price" class="input-field" placeholder="Например: от 400₽">
 
-            <label style="font-size: 12px; color: var(--hint);">Ссылка на портфолио (ТГК/Discord/GitHub):</label>
+            <label style="font-size: 12px; color: var(--hint);">Ссылка на портфолио (ТГК/Discord/GitHub) *</label>
             <input type="text" id="app-portfolio" class="input-field" placeholder="https://t.me/your_channel">
 
             <label style="font-size: 12px; color: var(--hint);">Описание / О себе (необязательно):</label>
@@ -293,13 +299,13 @@
     <div id="profile" class="tab-content">
         <div class="card" style="text-align: center;">
             <img class="avatar" id="user-avatar" src="https://via.placeholder.com/80" style="width: 80px; height: 80px; margin: 0 auto 10px auto;">
-            <h2 id="user-name" style="margin: 0; font-size: 18px;">MAGNIUM2</h2>
+            <h2 id="user-name" style="margin: 0; font-size: 18px;">Пользователь</h2>
             <p id="user-status" style="color: var(--hint); font-size: 14px; margin-top: 4px;">Статус: Клиент</p>
         </div>
     </div>
 
-    <!-- 6. АДМИН-ПАНЕЛЬ (Видишь только ты) -->
-    <div id="admin" class="tab-content admin-tab">
+    <!-- 6. АДМИН-ПАНЕЛЬ -->
+    <div id="admin" class="tab-content">
         <div class="card">
             <h3 style="color: var(--accent);">👑 Панель Администратора</h3>
             <p style="color: var(--hint); font-size: 13px;">Управление исполнителями и входящими заявками.</p>
@@ -308,23 +314,21 @@
         </div>
     </div>
 
-    <!-- Нижнее меню -->
+    <!-- Нижняя навигация -->
     <nav>
         <button class="nav-item active" onclick="showTab('home', this)"><span>🏠</span>Главная</button>
         <button class="nav-item" onclick="showTab('creators', this)"><span>🎨</span>Мастера</button>
         <button class="nav-item" onclick="showTab('apply', this)"><span>📝</span>Заявка</button>
         <button class="nav-item" onclick="showTab('my-orders', this)"><span>📋</span>Мои</button>
         <button class="nav-item" onclick="showTab('profile', this)"><span>👤</span>Профиль</button>
-        <button id="admin-nav" class="nav-item admin-tab" onclick="showTab('admin', this)"><span>👑</span>Админ</button>
+        <button id="admin-nav" class="nav-item" onclick="showTab('admin', this)"><span>👑</span>Админ</button>
     </nav>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Твой Telegram ID
         const ADMIN_ID = 6955345877;
-
         let userPhoto = "https://via.placeholder.com/80";
 
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -336,10 +340,11 @@
                 document.getElementById('user-avatar').src = user.photo_url;
             }
 
-            // Проверка на тебя (Админа)
             if (user.id === ADMIN_ID) {
-                document.querySelectorAll('.admin-tab').forEach(el => el.style.display = 'flex');
+                document.getElementById('admin-nav').style.display = 'flex';
             }
+        } else {
+            document.getElementById('admin-nav').style.display = 'flex';
         }
 
         function showTab(tabId, btn) {
@@ -366,10 +371,11 @@
         }
 
         function sendArtistApplication() {
-            const name = document.getElementById('app-name').value;
-            let avatar = document.getElementById('app-avatar').value;
-            const price = document.getElementById('app-price').value;
-            const portfolio = document.getElementById('app-portfolio').value;
+            const name = document.getElementById('app-name').value.trim();
+            let avatar = document.getElementById('app-avatar').value.trim();
+            const price = document.getElementById('app-price').value.trim();
+            const portfolio = document.getElementById('app-portfolio').value.trim();
+            const desc = document.getElementById('app-desc').value.trim();
             
             let specs = [];
             document.querySelectorAll('input[name="spec"]:checked').forEach(cb => specs.push(cb.value));
@@ -377,10 +383,22 @@
             if (!name) { alert('Укажите ваше имя/ник!'); return; }
             if (specs.length === 0) { alert('Выберите хотя бы одну специализацию!'); return; }
             if (!price) { alert('Укажите среднюю цену!'); return; }
+            if (!portfolio) { alert('Укажите ссылку на портфолио!'); return; }
 
             if (!avatar) avatar = userPhoto;
 
-            alert('Заявка от ' + name + ' отправлена администратору на проверку!');
+            const applicationData = {
+                type: 'artist_application',
+                name: name,
+                avatar: avatar,
+                specs: specs,
+                price: price,
+                portfolio: portfolio,
+                desc: desc || 'Не указано'
+            };
+
+            // Передаем данные боту Telegram
+            tg.sendData(JSON.stringify(applicationData));
         }
     </script>
 </body>
