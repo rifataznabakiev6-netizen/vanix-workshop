@@ -13,60 +13,67 @@
             --button: var(--tg-theme-button-color, #0088cc);
             --button-text: var(--tg-theme-button-text-color, #ffffff);
             --secondary-bg: var(--tg-theme-secondary-bg-color, #1e1e1e);
+            --accent: #2ea6ff;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
             padding: 0;
-            padding-bottom: 70px;
+            padding-bottom: 75px;
         }
 
         header {
             padding: 16px;
             text-align: center;
             background-color: var(--secondary-bg);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 20px;
-        }
+        header h1 { margin: 0; font-size: 20px; }
+        header p { margin: 4px 0 0; color: var(--hint); font-size: 13px; }
 
-        header p {
-            margin: 4px 0 0;
-            color: var(--hint);
-            font-size: 13px;
-        }
-
-        .tab-content {
-            display: none;
-            padding: 16px;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
+        .tab-content { display: none; padding: 16px; }
+        .tab-content.active { display: block; }
 
         .card {
             background-color: var(--secondary-bg);
-            border-radius: 12px;
+            border-radius: 14px;
             padding: 14px;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
-        .card h3 {
-            margin: 0 0 6px 0;
-            font-size: 16px;
+        .artist-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
         }
 
-        .card p {
-            margin: 0;
-            color: var(--hint);
-            font-size: 14px;
+        .avatar {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background-color: #333;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 8px 0;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.08);
+            color: var(--accent);
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 6px;
         }
 
         .btn {
@@ -79,11 +86,64 @@
             border-radius: 10px;
             font-weight: bold;
             font-size: 14px;
-            margin-top: 10px;
             cursor: pointer;
+            text-align: center;
+            box-sizing: border-box;
+            text-decoration: none;
         }
 
-        /* Нижняя навигация */
+        .btn-secondary {
+            background-color: rgba(255,255,255,0.08);
+            color: var(--text);
+            margin-top: 8px;
+        }
+
+        .input-field, .select-field {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0 12px 0;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background-color: #2a2a2a;
+            color: #fff;
+            box-sizing: border-box;
+        }
+
+        .spec-checkboxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 6px 0 12px 0;
+        }
+
+        .spec-checkboxes label {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #2a2a2a;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: bold;
+        }
+
         nav {
             position: fixed;
             bottom: 0;
@@ -94,7 +154,7 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(255,255,255,0.08);
         }
 
         .nav-item {
@@ -107,15 +167,13 @@
             align-items: center;
             gap: 4px;
             cursor: pointer;
+            flex: 1;
         }
 
-        .nav-item.active {
-            color: var(--button);
-        }
+        .nav-item.active { color: var(--button); }
+        .nav-item span { font-size: 18px; }
 
-        .nav-item span {
-            font-size: 18px;
-        }
+        .admin-tab { display: none; }
     </style>
 </head>
 <body>
@@ -125,73 +183,163 @@
         <p>Заказы Minecraft-услуг</p>
     </header>
 
-    <!-- Вкладки -->
+    <!-- 1. ГЛАВНАЯ -->
     <div id="home" class="tab-content active">
         <div class="card">
             <h3>🎨 Скины и 3D-модели</h3>
-            <p>Уникальные скины, текстуры и Blockbench модели любой сложности.</p>
+            <p style="color: var(--hint); font-size: 13px;">Уникальные скины, текстуры и Blockbench модели любой сложности.</p>
         </div>
         <div class="card">
             <h3>🗺️ Кастомные карты</h3>
-            <p>Спавны, хабы, арены и игровые миры под ключ.</p>
+            <p style="color: var(--hint); font-size: 13px;">Спавны, хабы, арены и игровые миры под ключ.</p>
+        </div>
+
+        <div class="card">
+            <h3>📌 Путеводитель</h3>
+            <p style="color: var(--hint); font-size: 13px; line-height: 1.4;">
+                Во вкладке <b>«Мастера»</b> вы можете выбрать исполнителя под ваш бюджет и стилистику и сразу оформить заказ.<br><br>
+                Хотите работать у нас? Подайте заявку на артиста во вкладке <b>«Заявка»</b>!
+            </p>
+        </div>
+
+        <div class="card">
+            <h3>🔗 Наши соцсети</h3>
+            <div class="social-links">
+                <a class="social-btn" href="#">Discord</a>
+                <a class="social-btn" href="#">Telegram</a>
+                <a class="social-btn" href="#">TikTok</a>
+                <a class="social-btn" href="#">YouTube</a>
+            </div>
         </div>
     </div>
 
+    <!-- 2. МАСТЕРА -->
     <div id="creators" class="tab-content">
         <div class="card">
-            <h3>Артист #1</h3>
-            <p>Специализация: 3D-модели и скины</p>
-            <button class="btn" onclick="alert('Выбран Исполнитель #1')">Выбрать</button>
+            <div class="artist-header">
+                <img class="avatar" src="https://via.placeholder.com/55" alt="Avatar">
+                <div>
+                    <h3 style="margin: 0;">MAGNIUM2</h3>
+                    <p style="color: var(--accent); font-size: 12px; margin: 2px 0;"><b>Средний чек:</b> от 500₽</p>
+                </div>
+            </div>
+            
+            <div class="tags">
+                <span class="tag">3D Modeler</span>
+                <span class="tag">Skin Maker</span>
+                <span class="tag">Builder</span>
+            </div>
+
+            <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">Делаю качественные 3D-модели в Blockbench и скины любой сложности.</p>
+
+            <a class="btn btn-secondary" href="https://t.me/" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
+            <button class="btn" onclick="startOrder('MAGNIUM2')">Заказать у него</button>
         </div>
     </div>
 
-    <div id="order" class="tab-content">
+    <!-- 3. ЗАЯВКА НА АРТИСТА -->
+    <div id="apply" class="tab-content">
         <div class="card">
-            <h3>Форма заказа</h3>
-            <p>Здесь будет удобное оформление заказа.</p>
-            <button class="btn" onclick="alert('Заказ отправлен!')">Отправить заказ</button>
+            <h3>📝 Заявка на артиста</h3>
+            <p style="color: var(--hint); font-size: 13px;">Заполните форму, чтобы вступить в команду VANIX Workshop.</p>
+            
+            <label style="font-size: 12px; color: var(--hint);">Имя / Никнейм:</label>
+            <input type="text" id="app-name" class="input-field" placeholder="Например: CraftMaster">
+
+            <label style="font-size: 12px; color: var(--hint);">Ссылка на аватарку (если пусто — берем из Telegram):</label>
+            <input type="text" id="app-avatar" class="input-field" placeholder="https://i.imgur.com/...">
+
+            <label style="font-size: 12px; color: var(--hint);">Специализации (можно несколько):</label>
+            <div class="spec-checkboxes">
+                <label><input type="checkbox" name="spec" value="Map Maker"> Map Maker</label>
+                <label><input type="checkbox" name="spec" value="Builder"> Builder</label>
+                <label><input type="checkbox" name="spec" value="Skin Maker"> Skin Maker</label>
+                <label><input type="checkbox" name="spec" value="3D Modeler"> 3D Modeler</label>
+                <label><input type="checkbox" name="spec" value="Texture Artist"> Texture Artist</label>
+                <label><input type="checkbox" name="spec" value="2D Artist"> 2D Artist</label>
+                <label><input type="checkbox" name="spec" value="Animator"> Animator</label>
+                <label><input type="checkbox" name="spec" value="Plugin Developer"> Plugin Dev</label>
+                <label><input type="checkbox" name="spec" value="Mod Developer"> Mod Dev</label>
+                <label><input type="checkbox" name="spec" value="Video Editor"> Video Editor</label>
+            </div>
+
+            <label style="font-size: 12px; color: var(--hint);">Средняя цена работы:</label>
+            <input type="text" id="app-price" class="input-field" placeholder="Например: от 400₽">
+
+            <label style="font-size: 12px; color: var(--hint);">Ссылка на портфолио (ТГК/Discord/GitHub):</label>
+            <input type="text" id="app-portfolio" class="input-field" placeholder="https://t.me/your_channel">
+
+            <label style="font-size: 12px; color: var(--hint);">Описание / О себе (необязательно):</label>
+            <textarea id="app-desc" class="input-field" rows="3" placeholder="Расскажите о вашем опыте..."></textarea>
+
+            <button class="btn" onclick="sendArtistApplication()">Отправить заявку админу</button>
         </div>
     </div>
 
+    <!-- 4. МОИ ЗАКАЗЫ -->
     <div id="my-orders" class="tab-content">
         <div class="card">
-            <h3>Активных заказов нет</h3>
-            <p>Все ваши текущие заказы будут отображаться тут.</p>
+            <h3>📋 Мои заказы</h3>
+            <p style="color: var(--hint); font-size: 13px;">Все созданные вами заказы отображаются ниже.</p>
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 10px 0;">
+            
+            <div id="orders-list">
+                <p style="color: var(--hint); font-size: 13px;">У вас пока нет активных заказов.</p>
+            </div>
         </div>
     </div>
 
+    <!-- 5. ПРОФИЛЬ -->
     <div id="profile" class="tab-content">
+        <div class="card" style="text-align: center;">
+            <img class="avatar" id="user-avatar" src="https://via.placeholder.com/80" style="width: 80px; height: 80px; margin: 0 auto 10px auto;">
+            <h2 id="user-name" style="margin: 0; font-size: 18px;">MAGNIUM2</h2>
+            <p id="user-status" style="color: var(--hint); font-size: 14px; margin-top: 4px;">Статус: Клиент</p>
+        </div>
+    </div>
+
+    <!-- 6. АДМИН-ПАНЕЛЬ (Видишь только ты) -->
+    <div id="admin" class="tab-content admin-tab">
         <div class="card">
-            <h3 id="user-name">Профиль</h3>
-            <p>Статус: Клиент</p>
+            <h3 style="color: var(--accent);">👑 Панель Администратора</h3>
+            <p style="color: var(--hint); font-size: 13px;">Управление исполнителями и входящими заявками.</p>
+            <button class="btn btn-secondary" onclick="alert('Входящих заявок нет')">Входящие заявки (0)</button>
+            <button class="btn btn-secondary" onclick="alert('Форма добавления артиста')">+ Добавить артиста вручную</button>
         </div>
     </div>
 
     <!-- Нижнее меню -->
     <nav>
-        <button class="nav-item active" onclick="showTab('home', this)">
-            <span>🏠</span>Главная
-        </button>
-        <button class="nav-item" onclick="showTab('creators', this)">
-            <span>🎨</span>Мастера
-        </button>
-        <button class="nav-item" onclick="showTab('order', this)">
-            <span>📦</span>Заказ
-        </button>
-        <button class="nav-item" onclick="showTab('my-orders', this)">
-            <span>📋</span>Мои
-        </button>
-        <button class="nav-item" onclick="showTab('profile', this)">
-            <span>👤</span>Профиль
-        </button>
+        <button class="nav-item active" onclick="showTab('home', this)"><span>🏠</span>Главная</button>
+        <button class="nav-item" onclick="showTab('creators', this)"><span>🎨</span>Мастера</button>
+        <button class="nav-item" onclick="showTab('apply', this)"><span>📝</span>Заявка</button>
+        <button class="nav-item" onclick="showTab('my-orders', this)"><span>📋</span>Мои</button>
+        <button class="nav-item" onclick="showTab('profile', this)"><span>👤</span>Профиль</button>
+        <button id="admin-nav" class="nav-item admin-tab" onclick="showTab('admin', this)"><span>👑</span>Админ</button>
     </nav>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        // Твой Telegram ID
+        const ADMIN_ID = 6955345877;
+
+        let userPhoto = "https://via.placeholder.com/80";
+
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('user-name').innerText = tg.initDataUnsafe.user.first_name;
+            const user = tg.initDataUnsafe.user;
+            document.getElementById('user-name').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            
+            if (user.photo_url) {
+                userPhoto = user.photo_url;
+                document.getElementById('user-avatar').src = user.photo_url;
+            }
+
+            // Проверка на тебя (Админа)
+            if (user.id === ADMIN_ID) {
+                document.querySelectorAll('.admin-tab').forEach(el => el.style.display = 'flex');
+            }
         }
 
         function showTab(tabId, btn) {
@@ -200,6 +348,39 @@
             
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
+        }
+
+        function startOrder(artistName) {
+            const orderId = Math.floor(1000 + Math.random() * 9000);
+            const ordersList = document.getElementById('orders-list');
+            
+            ordersList.innerHTML = `
+                <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                    <b>Заказ #${orderId}</b><br>
+                    <span style="font-size: 12px; color: var(--hint);">Исполнитель: ${artistName}</span><br>
+                    <span style="font-size: 12px; color: var(--accent);">Статус: В ожидании ответа</span>
+                    <a class="btn" style="margin-top: 8px; font-size: 12px; padding: 8px;" href="https://t.me/" target="_blank">💬 Написать артисту в ЛС</a>
+                </div>
+            `;
+            alert('Заказ #' + orderId + ' создан! Перейдите во вкладку "Мои", чтобы написать артисту.');
+        }
+
+        function sendArtistApplication() {
+            const name = document.getElementById('app-name').value;
+            let avatar = document.getElementById('app-avatar').value;
+            const price = document.getElementById('app-price').value;
+            const portfolio = document.getElementById('app-portfolio').value;
+            
+            let specs = [];
+            document.querySelectorAll('input[name="spec"]:checked').forEach(cb => specs.push(cb.value));
+
+            if (!name) { alert('Укажите ваше имя/ник!'); return; }
+            if (specs.length === 0) { alert('Выберите хотя бы одну специализацию!'); return; }
+            if (!price) { alert('Укажите среднюю цену!'); return; }
+
+            if (!avatar) avatar = userPhoto;
+
+            alert('Заявка от ' + name + ' отправлена администратору на проверку!');
         }
     </script>
 </body>
