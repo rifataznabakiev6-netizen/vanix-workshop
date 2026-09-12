@@ -7,14 +7,13 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-color: #0b1120;
-      --card-bg: #151f32;
-      --input-bg: #0f172a;
-      --accent: #38bdf8;
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --input-bg: #282828;
       --text: #ffffff;
-      --text-muted: #94a3b8;
+      --text-muted: #aaaaaa;
+      --accent: #38bdf8;
       --danger: #ef4444;
-      --border: #1e293b;
     }
     * {
       box-sizing: border-box;
@@ -25,43 +24,24 @@
     body {
       background-color: var(--bg-color);
       color: var(--text);
-      padding: 16px;
+      padding-bottom: 75px;
     }
-    .header-title {
+    .header {
       text-align: center;
+      padding: 20px 16px 10px;
+    }
+    .header h1 {
       font-size: 1.5rem;
       font-weight: 800;
-      margin-bottom: 16px;
-      letter-spacing: 0.5px;
     }
-
-    /* Верхнее меню переключения */
-    .top-nav {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      justify-content: center;
+    .header p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 2px;
     }
-    .nav-btn {
-      flex: 1;
-      padding: 10px 14px;
-      border-radius: 10px;
-      border: 1px solid var(--accent);
-      background: transparent;
-      color: var(--text);
-      font-weight: 600;
-      font-size: 0.9rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+    .content {
+      padding: 12px 16px;
     }
-    .nav-btn.active {
-      background: var(--accent);
-      color: #000000;
-    }
-
     .tab-content {
       display: none;
     }
@@ -69,259 +49,294 @@
       display: block;
     }
 
-    /* Карточки мастеров */
+    /* Карточки артистов (Скриншот 1 и 3) */
     .artist-card {
       background: var(--card-bg);
-      border: 1px solid var(--border);
       border-radius: 14px;
       padding: 16px;
       margin-bottom: 14px;
     }
-    .artist-top {
+    .artist-header {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
-    .avatar-circle {
-      width: 44px;
-      height: 44px;
+    .artist-avatar {
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      background: #1e293b;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 1.1rem;
-      flex-shrink: 0;
+      background: #333;
+      object-fit: cover;
     }
-    .artist-title h3 {
+    .artist-info h3 {
       font-size: 1.1rem;
       font-weight: 700;
     }
-    .artist-price {
-      color: var(--accent);
-      font-size: 0.85rem;
-      margin-top: 2px;
-    }
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-    .tag {
-      background: #0f172a;
-      color: var(--accent);
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-    }
-    .artist-desc {
+    .artist-info p {
       color: var(--text-muted);
-      font-size: 0.88rem;
-      line-height: 1.4;
-      margin-bottom: 12px;
+      font-size: 0.85rem;
     }
-    .btn-action {
-      display: block;
+    .btn-select {
       width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-align: center;
-      text-decoration: none;
-      margin-bottom: 8px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #000000;
+      font-weight: bold;
       border: none;
       cursor: pointer;
-    }
-    .btn-portfolio {
-      background: #1e293b;
-      color: var(--text);
-    }
-    .btn-order {
-      background: var(--accent);
-      color: #000;
+      font-size: 0.95rem;
     }
     .btn-delete {
       background: var(--danger);
       color: #fff;
+      margin-top: 8px;
     }
 
-    /* Форма заявки */
-    .form-box {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
+    /* Профиль (Скриншот 5) */
+    .profile-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 0;
     }
-    .form-title {
-      text-align: center;
-      font-size: 1.3rem;
-      font-weight: 700;
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #333;
       margin-bottom: 16px;
+      object-fit: cover;
     }
+    .profile-name {
+      font-size: 1.4rem;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+    .profile-status {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Формы */
     form {
       display: flex;
       flex-direction: column;
       gap: 12px;
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: 14px;
     }
     input, textarea {
       background: var(--input-bg);
-      border: 1px solid var(--border);
+      border: 1px solid #333;
       color: #fff;
       padding: 12px;
       border-radius: 8px;
       font-size: 0.9rem;
       outline: none;
     }
-    input::placeholder, textarea::placeholder {
-      color: var(--text-muted);
-    }
     .btn-submit {
-      background: var(--accent);
+      background: #38bdf8;
       color: #000;
       padding: 12px;
       border-radius: 8px;
       font-weight: bold;
       border: none;
       cursor: pointer;
-      margin-top: 4px;
+    }
+
+    /* Нижнее меню (Как на твоих снимках) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #18181b;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      border-top: 1px solid #27272a;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      text-decoration: none;
+      cursor: pointer;
+      flex: 1;
+    }
+    .nav-item .icon {
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+    }
+    .nav-item.active {
+      color: var(--accent);
     }
   </style>
 </head>
 <body>
 
-  <div class="header-title">VANIX WorkShop</div>
-
-  <!-- Верхние кнопки переключения -->
-  <div class="top-nav">
-    <button class="nav-btn active" onclick="switchTab('artists', this)">🎨 Артисты</button>
-    <button class="nav-btn" onclick="switchTab('apply', this)">📝 Стать мастером</button>
-    <button id="admin-tab-btn" class="nav-btn" style="display:none;" onclick="switchTab('admin', this)">👑 Админ</button>
+  <div class="header">
+    <h1>VANIX Workshop</h1>
+    <p>Заказы Minecraft-услуг</p>
   </div>
 
-  <!-- Вкладка: Артисты -->
-  <div id="tab-artists" class="tab-content active">
-    <div id="artists-container">Загрузка мастеров...</div>
-  </div>
-
-  <!-- Вкладка: Заявка на вступление -->
-  <div id="tab-apply" class="tab-content">
-    <div class="form-box">
-      <div class="form-title">Заявка на вступление</div>
-      <form id="appForm">
-        <input type="text" id="name" placeholder="Ваш никнейм" required>
-        <input type="text" id="price" placeholder="Средняя цена (напр. от 500₽)" required>
-        <input type="url" id="portfolio" placeholder="Ссылка на портфолио" required>
-        <input type="text" id="specs" placeholder="Специализации (через запятую)" required>
-        <textarea id="desc" rows="3" placeholder="Описание ваших услуг" required></textarea>
-        <button type="submit" class="btn-submit">Отправить заявку</button>
-      </form>
+  <div class="content">
+    <!-- Вкладка 1: Главная (Скриншот 4) -->
+    <div id="tab-home" class="tab-content active">
+      <div style="background: var(--card-bg); padding:16px; border-radius:14px; margin-bottom:12px;">
+        <h3>🎨 Скины и 3D-модели</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Уникальные скины, текстуры и Blockbench модели любой сложности.</p>
+      </div>
+      <div style="background: var(--card-bg); padding:16px; border-radius:14px;">
+        <h3>🗺️ Кастомные карты</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem; margin-top:4px;">Спавны, хабы, арены и игровые миры под ключ.</p>
+      </div>
     </div>
-  </div>
 
-  <!-- Вкладка: Админ панель -->
-  <div id="tab-admin" class="tab-content">
-    <div class="form-box" style="margin-bottom: 20px;">
-      <div class="form-title">➕ Добавить мастера вручную</div>
-      <form id="adminAddForm">
-        <input type="text" id="adm-name" placeholder="Никнейм мастера" required>
-        <input type="text" id="adm-price" placeholder="Средняя цена (напр. от 500₽)" required>
-        <input type="url" id="adm-portfolio" placeholder="Ссылка на портфолио" required>
-        <input type="text" id="adm-specs" placeholder="Специализации (через запятую)" required>
-        <textarea id="adm-desc" rows="3" placeholder="Описание услуг" required></textarea>
-        <button type="submit" class="btn-submit">Добавить в базу</button>
+    <!-- Вкладка 2: Мастера (Скриншот 1 и 3) -->
+    <div id="tab-masters" class="tab-content">
+      <div id="masters-list">Загрузка артистов...</div>
+    </div>
+
+    <!-- Вкладка 3: Заявка на артиста (Скриншот 6) -->
+    <div id="tab-apply" class="tab-content">
+      <h3 style="text-align:center; margin-bottom:12px;">Подать заявку на артиста</h3>
+      <form id="applyForm">
+        <input type="text" id="app-name" placeholder="Ваш никнейм" required>
+        <input type="text" id="app-specs" placeholder="Специализация (напр. 3D-модели)" required>
+        <input type="text" id="app-price" placeholder="Средняя цена (напр. от 500₽)" required>
+        <input type="url" id="app-avatar" placeholder="Ссылка на вашу аватарку (URL)" required>
+        <textarea id="app-desc" rows="3" placeholder="Описание ваших работ" required></textarea>
+        <button type="submit" class="btn-submit">Отправить заявку админу</button>
       </form>
     </div>
 
-    <div class="form-title" style="margin-bottom:12px;">Управление мастерами:</div>
-    <div id="admin-artists-list">Загрузка...</div>
+    <!-- Вкладка 4: Мои заказы -->
+    <div id="tab-my" class="tab-content">
+      <p style="text-align:center; color:var(--text-muted); padding:30px 0;">У вас пока нет активных заказов.</p>
+    </div>
+
+    <!-- Вкладка 5: Профиль (Скриншот 2 и 5) -->
+    <div id="tab-profile" class="tab-content">
+      <div class="profile-box">
+        <img id="user-avatar" class="profile-avatar" src="https://via.placeholder.com/100" alt="Avatar">
+        <div id="user-name" class="profile-name">Загрузка...</div>
+        <div id="user-status" class="profile-status">Статус: Клиент</div>
+      </div>
+    </div>
+
+    <!-- Приватная вкладка 6: Админ-панель (Видна только тебе) -->
+    <div id="tab-admin" class="tab-content">
+      <h2 style="text-align:center; color:var(--accent); margin-bottom:12px;">👑 Приватная админ-панель</h2>
+      
+      <form id="adminAddForm" style="margin-bottom:20px;">
+        <h3>➕ Добавить артиста напрямую</h3>
+        <input type="text" id="adm-name" placeholder="Никнейм артиста" required>
+        <input type="text" id="adm-specs" placeholder="Специализация" required>
+        <input type="text" id="adm-price" placeholder="Средняя цена" required>
+        <input type="url" id="adm-avatar" placeholder="Ссылка на аватарку" required>
+        <textarea id="adm-desc" rows="2" placeholder="Описание"></textarea>
+        <button type="submit" class="btn-submit">Добавить артиста</button>
+      </form>
+
+      <h3>Управление существующими артистами:</h3>
+      <div id="admin-artists-list" style="margin-top:10px;">Загрузка...</div>
+    </div>
+  </div>
+
+  <!-- Нижняя панель навигации -->
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="switchTab('home', this)"><span class="icon">🏠</span>Главная</div>
+    <div class="nav-item" onclick="switchTab('masters', this)"><span class="icon">🎨</span>Мастера</div>
+    <div class="nav-item" onclick="switchTab('apply', this)"><span class="icon">📦</span>Заявка</div>
+    <div class="nav-item" onclick="switchTab('my', this)"><span class="icon">📋</span>Мои</div>
+    <div class="nav-item" onclick="switchTab('profile', this)"><span class="icon">👤</span>Профиль</div>
+    <div id="admin-nav-item" class="nav-item" style="display:none;" onclick="switchTab('admin', this)"><span class="icon">👑</span>Админ</div>
   </div>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    const ADMIN_ID = 6955345877;
-    const userId = tg.initDataUnsafe?.user?.id;
+    const ADMIN_ID = 6955345877; // Твой Telegram ID
+    const user = tg.initDataUnsafe?.user;
 
-    // Показываем кнопку "Админ" только для тебя
-    if (userId === ADMIN_ID) {
-      document.getElementById('admin-tab-btn').style.display = 'flex';
-    }
-
-    function switchTab(tabId, btn) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-
-      document.getElementById('tab-' + tabId).classList.add('active');
-      if (btn) btn.classList.add('active');
-
-      if (tabId === 'admin') {
-        loadAdminArtists();
+    // Подгружаем профиль из ТГ
+    if (user) {
+      document.getElementById('user-name').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+      if (user.photo_url) {
+        document.getElementById('user-avatar').src = user.photo_url;
       }
+      if (user.id === ADMIN_ID) {
+        document.getElementById('admin-nav-item').style.display = 'flex';
+      }
+    } else {
+      document.getElementById('user-name').innerText = "MAGNIUM2";
     }
 
+    function switchTab(tabId, el) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      
+      document.getElementById('tab-' + tabId).classList.add('active');
+      if (el) el.classList.add('active');
+
+      if (tabId === 'masters') loadArtists();
+      if (tabId === 'admin') loadAdminArtists();
+    }
+
+    // Загрузка списка мастеров для пользователей
     async function loadArtists() {
-      const container = document.getElementById('artists-container');
+      const container = document.getElementById('masters-list');
       try {
         const res = await fetch('artists.json?cache=' + Date.now());
-        if (!res.ok) throw new Error();
         const artists = await res.json();
 
-        if (artists.length === 0) {
-          container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Список мастеров пуст.</p>";
+        if (!artists || artists.length === 0) {
+          container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Нет активных артистов.</p>";
           return;
         }
 
-        container.innerHTML = artists.map(a => {
-          const letter = a.name ? a.name.charAt(0).toUpperCase() : 'M';
-          return `
-            <div class="artist-card">
-              <div class="artist-top">
-                <div class="avatar-circle">${letter}</div>
-                <div class="artist-title">
-                  <h3>${a.name}</h3>
-                  <div class="artist-price">${a.price}</div>
-                </div>
+        container.innerHTML = artists.map(a => `
+          <div class="artist-card">
+            <div class="artist-header">
+              <img class="artist-avatar" src="${a.avatar || 'https://via.placeholder.com/50'}" alt="Avatar">
+              <div class="artist-info">
+                <h3>${a.name}</h3>
+                <p>Специализация: ${a.specs}</p>
+                <p style="color:var(--accent); font-size:0.8rem;">${a.price || ''}</p>
               </div>
-              <div class="tags">
-                ${(a.specs || []).map(s => `<span class="tag">${s}</span>`).join('')}
-              </div>
-              <div class="artist-desc">${a.desc}</div>
-              <a href="${a.portfolio}" target="_blank" class="btn-action btn-portfolio">📁 Портфолио</a>
-              <button onclick="orderArtist('${a.name}')" class="btn-action btn-order">Заказать</button>
             </div>
-          `;
-        }).join('');
+            <button onclick="selectArtist('${a.name}')" class="btn-select">Выбрать</button>
+          </div>
+        `).join('');
       } catch (e) {
-        container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Не удалось загрузить мастеров.</p>";
+        container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Не удалось загрузить артистов.</p>";
       }
     }
 
+    // Загрузка артистов для админ-панели (с кнопками Удалить)
     async function loadAdminArtists() {
       const container = document.getElementById('admin-artists-list');
       try {
         const res = await fetch('artists.json?cache=' + Date.now());
         const artists = await res.json();
 
-        if (artists.length === 0) {
-          container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Список мастеров пуст.</p>";
-          return;
-        }
-
         container.innerHTML = artists.map((a, idx) => `
           <div class="artist-card">
-            <div class="artist-top">
-              <div class="artist-title">
+            <div class="artist-header">
+              <img class="artist-avatar" src="${a.avatar || 'https://via.placeholder.com/50'}">
+              <div class="artist-info">
                 <h3>${a.name}</h3>
-                <div class="artist-price">${a.price}</div>
+                <p>${a.specs}</p>
               </div>
             </div>
-            <button onclick="deleteArtist(${idx}, '${a.name}')" class="btn-action btn-delete">❌ Удалить мастера</button>
+            <button onclick="deleteArtist(${idx}, '${a.name}')" class="btn-select btn-delete">❌ Удалить артиста</button>
           </div>
         `).join('');
       } catch (e) {
@@ -329,49 +344,47 @@
       }
     }
 
+    // Функция выбора артиста
+    function selectArtist(name) {
+      tg.sendData(JSON.stringify({ type: 'select_artist', artist: name }));
+      tg.close();
+    }
+
+    // Функция удаления артиста админом
     function deleteArtist(index, name) {
-      if (confirm(`Удалить мастера ${name}?`)) {
-        tg.sendData(JSON.stringify({
-          action: 'admin_delete_artist',
-          index: index,
-          name: name
-        }));
+      if (confirm(`Удалить артиста ${name}?`)) {
+        tg.sendData(JSON.stringify({ action: 'admin_delete_artist', index: index, name: name }));
         tg.close();
       }
     }
 
+    // Отправка заявки на артиста
+    document.getElementById('applyForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      tg.sendData(JSON.stringify({
+        type: 'artist_application',
+        name: document.getElementById('app-name').value,
+        specs: document.getElementById('app-specs').value,
+        price: document.getElementById('app-price').value,
+        avatar: document.getElementById('app-avatar').value,
+        desc: document.getElementById('app-desc').value
+      }));
+      tg.close();
+    });
+
+    // Прямое добавление админом
     document.getElementById('adminAddForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const payload = {
+      tg.sendData(JSON.stringify({
         action: 'admin_add_artist',
         name: document.getElementById('adm-name').value,
+        specs: document.getElementById('adm-specs').value,
         price: document.getElementById('adm-price').value,
-        portfolio: document.getElementById('adm-portfolio').value,
-        specs: document.getElementById('adm-specs').value.split(',').map(s => s.trim()),
+        avatar: document.getElementById('adm-avatar').value,
         desc: document.getElementById('adm-desc').value
-      };
-      tg.sendData(JSON.stringify(payload));
+      }));
       tg.close();
     });
-
-    document.getElementById('appForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const payload = {
-        type: 'artist_application',
-        name: document.getElementById('name').value,
-        price: document.getElementById('price').value,
-        portfolio: document.getElementById('portfolio').value,
-        specs: document.getElementById('specs').value.split(',').map(s => s.trim()),
-        desc: document.getElementById('desc').value
-      };
-      tg.sendData(JSON.stringify(payload));
-      tg.close();
-    });
-
-    function orderArtist(name) {
-      tg.sendData(JSON.stringify({ type: 'order', artist: name }));
-      tg.close();
-    }
 
     loadArtists();
   </script>
