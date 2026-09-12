@@ -397,8 +397,13 @@
                 desc: desc || 'Не указано'
             };
 
-            // Передаем данные боту Telegram
-            tg.sendData(JSON.stringify(applicationData));
+            try {
+                tg.sendData(JSON.stringify(applicationData));
+                alert('Заявка отправлена!');
+                tg.close();
+            } catch (e) {
+                alert('Заявка создана! (Для автоматической отправки боту открывайте приложение через кнопку в чате)');
+            }
         }
     </script>
 </body>
