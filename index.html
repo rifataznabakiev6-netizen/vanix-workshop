@@ -14,6 +14,8 @@
             --button-text: var(--tg-theme-button-text-color, #ffffff);
             --secondary-bg: var(--tg-theme-secondary-bg-color, #1e1e1e);
             --accent: #2ea6ff;
+            --danger: #ff4d4d;
+            --success: #2ecc71;
         }
 
         body {
@@ -101,6 +103,15 @@
             background-color: rgba(255,255,255,0.08);
             color: var(--text);
             margin-top: 8px;
+        }
+
+        .btn-success { background-color: var(--success); color: #fff; }
+        .btn-danger { background-color: var(--danger); color: #fff; }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
         }
 
         .input-field {
@@ -199,7 +210,6 @@
             <h3>🗺️ Кастомные карты</h3>
             <p style="color: var(--hint); font-size: 13px;">Спавны, хабы, арены и игровые миры под ключ.</p>
         </div>
-
         <div class="card">
             <h3>📌 Путеводитель</h3>
             <p style="color: var(--hint); font-size: 13px; line-height: 1.4;">
@@ -207,39 +217,29 @@
                 Хотите работать у нас? Подайте заявку на артиста во вкладке <b>«Заявка»</b>!
             </p>
         </div>
-
-        <div class="card">
-            <h3>🔗 Наши соцсети</h3>
-            <div class="social-links">
-                <a class="social-btn" href="#">Discord</a>
-                <a class="social-btn" href="#">Telegram</a>
-                <a class="social-btn" href="#">TikTok</a>
-                <a class="social-btn" href="#">YouTube</a>
-            </div>
-        </div>
     </div>
 
     <!-- 2. МАСТЕРА -->
     <div id="creators" class="tab-content">
-        <div class="card">
-            <div class="artist-header">
-                <img class="avatar" src="https://via.placeholder.com/55" alt="Avatar">
-                <div>
-                    <h3 style="margin: 0;">MAGNIUM2</h3>
-                    <p style="color: var(--accent); font-size: 12px; margin: 2px 0;"><b>Средний чек:</b> от 500₽</p>
+        <div id="creators-list">
+            <!-- Начальный артист по умолчанию -->
+            <div class="card">
+                <div class="artist-header">
+                    <img class="avatar" src="https://via.placeholder.com/55" alt="Avatar">
+                    <div>
+                        <h3 style="margin: 0;">MAGNIUM2</h3>
+                        <p style="color: var(--accent); font-size: 12px; margin: 2px 0;"><b>Средний чек:</b> от 500₽</p>
+                    </div>
                 </div>
+                <div class="tags">
+                    <span class="tag">3D Modeler</span>
+                    <span class="tag">Skin Maker</span>
+                    <span class="tag">Builder</span>
+                </div>
+                <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">Делаю качественные 3D-модели в Blockbench и скины любой сложности.</p>
+                <a class="btn btn-secondary" href="https://t.me/" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
+                <button class="btn" onclick="startOrder('MAGNIUM2')">Заказать у него</button>
             </div>
-            
-            <div class="tags">
-                <span class="tag">3D Modeler</span>
-                <span class="tag">Skin Maker</span>
-                <span class="tag">Builder</span>
-            </div>
-
-            <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">Делаю качественные 3D-модели в Blockbench и скины любой сложности.</p>
-
-            <a class="btn btn-secondary" href="https://t.me/" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
-            <button class="btn" onclick="startOrder('MAGNIUM2')">Заказать у него</button>
         </div>
     </div>
 
@@ -255,7 +255,7 @@
             <label style="font-size: 12px; color: var(--hint);">Ссылка на аватарку (необязательно):</label>
             <input type="text" id="app-avatar" class="input-field" placeholder="https://i.imgur.com/...">
 
-            <label style="font-size: 12px; color: var(--hint);">Специализации (выберите хотя бы одну) *</label>
+            <label style="font-size: 12px; color: var(--hint);">Специализации *</label>
             <div class="spec-checkboxes">
                 <label><input type="checkbox" name="spec" value="Map Maker"> Map Maker</label>
                 <label><input type="checkbox" name="spec" value="Builder"> Builder</label>
@@ -264,9 +264,7 @@
                 <label><input type="checkbox" name="spec" value="Texture Artist"> Texture Artist</label>
                 <label><input type="checkbox" name="spec" value="2D Artist"> 2D Artist</label>
                 <label><input type="checkbox" name="spec" value="Animator"> Animator</label>
-                <label><input type="checkbox" name="spec" value="Plugin Developer"> Plugin Dev</label>
-                <label><input type="checkbox" name="spec" value="Mod Developer"> Mod Dev</label>
-                <label><input type="checkbox" name="spec" value="Video Editor"> Video Editor</label>
+                <label><input type="checkbox" name="spec" value="Plugin Dev"> Plugin Dev</label>
             </div>
 
             <label style="font-size: 12px; color: var(--hint);">Средняя цена работы *</label>
@@ -275,10 +273,10 @@
             <label style="font-size: 12px; color: var(--hint);">Ссылка на портфолио (ТГК/Discord/GitHub) *</label>
             <input type="text" id="app-portfolio" class="input-field" placeholder="https://t.me/your_channel">
 
-            <label style="font-size: 12px; color: var(--hint);">Описание / О себе (необязательно):</label>
+            <label style="font-size: 12px; color: var(--hint);">Описание / О себе:</label>
             <textarea id="app-desc" class="input-field" rows="3" placeholder="Расскажите о вашем опыте..."></textarea>
 
-            <button class="btn" onclick="sendArtistApplication()">Отправить заявку админу</button>
+            <button class="btn" onclick="sendArtistApplication()">Отправить заявку</button>
         </div>
     </div>
 
@@ -286,9 +284,6 @@
     <div id="my-orders" class="tab-content">
         <div class="card">
             <h3>📋 Мои заказы</h3>
-            <p style="color: var(--hint); font-size: 13px;">Все созданные вами заказы отображаются ниже.</p>
-            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.08); margin: 10px 0;">
-            
             <div id="orders-list">
                 <p style="color: var(--hint); font-size: 13px;">У вас пока нет активных заказов.</p>
             </div>
@@ -307,14 +302,15 @@
     <!-- 6. АДМИН-ПАНЕЛЬ -->
     <div id="admin" class="tab-content">
         <div class="card">
-            <h3 style="color: var(--accent);">👑 Панель Администратора</h3>
-            <p style="color: var(--hint); font-size: 13px;">Управление исполнителями и входящими заявками.</p>
-            <button class="btn btn-secondary" onclick="alert('Входящих заявок нет')">Входящие заявки (0)</button>
-            <button class="btn btn-secondary" onclick="alert('Форма добавления артиста')">+ Добавить артиста вручную</button>
+            <h3 style="color: var(--accent); margin-top: 0;">👑 Панель Администратора</h3>
+            <p style="color: var(--hint); font-size: 13px;">Входящие заявки от артистов:</p>
+            <div id="applications-list">
+                <p style="color: var(--hint); font-size: 13px;">Нет входящих заявок.</p>
+            </div>
         </div>
     </div>
 
-    <!-- Нижняя навигация -->
+    <!-- Навигация -->
     <nav>
         <button class="nav-item active" onclick="showTab('home', this)"><span>🏠</span>Главная</button>
         <button class="nav-item" onclick="showTab('creators', this)"><span>🎨</span>Мастера</button>
@@ -329,17 +325,16 @@
         tg.expand();
 
         const ADMIN_ID = 6955345877;
-        let userPhoto = "https://via.placeholder.com/80";
+        let userPhoto = "https://via.placeholder.com/55";
 
+        // Загрузка данных пользователя
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
             document.getElementById('user-name').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-            
             if (user.photo_url) {
                 userPhoto = user.photo_url;
                 document.getElementById('user-avatar').src = user.photo_url;
             }
-
             if (user.id === ADMIN_ID) {
                 document.getElementById('admin-nav').style.display = 'flex';
             }
@@ -347,14 +342,182 @@
             document.getElementById('admin-nav').style.display = 'flex';
         }
 
+        // Переключение вкладок
         function showTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
+
+            if (tabId === 'admin') renderApplications();
+            if (tabId === 'creators') renderApprovedCreators();
         }
 
+        // Работа с локальным хранилищем (Заявки и Артисты)
+        function getApplications() {
+            return JSON.parse(localStorage.getItem('vanix_applications') || '[]');
+        }
+        function saveApplications(apps) {
+            localStorage.setItem('vanix_applications', JSON.stringify(apps));
+        }
+
+        function getApprovedCreators() {
+            return JSON.parse(localStorage.getItem('vanix_approved_creators') || '[]');
+        }
+        function saveApprovedCreators(creators) {
+            localStorage.setItem('vanix_approved_creators', JSON.stringify(creators));
+        }
+
+        // Подача заявки пользователем
+        function sendArtistApplication() {
+            const name = document.getElementById('app-name').value.trim();
+            let avatar = document.getElementById('app-avatar').value.trim();
+            const price = document.getElementById('app-price').value.trim();
+            const portfolio = document.getElementById('app-portfolio').value.trim();
+            const desc = document.getElementById('app-desc').value.trim();
+            
+            let specs = [];
+            document.querySelectorAll('input[name="spec"]:checked').forEach(cb => specs.push(cb.value));
+
+            if (!name) { alert('Укажите имя!'); return; }
+            if (specs.length === 0) { alert('Выберите специализацию!'); return; }
+            if (!price) { alert('Укажите цену!'); return; }
+            if (!portfolio) { alert('Укажите портфолио!'); return; }
+
+            const newApp = {
+                id: Date.now(),
+                name: name,
+                avatar: avatar || userPhoto,
+                specs: specs,
+                price: price,
+                portfolio: portfolio,
+                desc: desc || 'Описание не указано'
+            };
+
+            const apps = getApplications();
+            apps.push(newApp);
+            saveApplications(apps);
+
+            alert('✅ Заявка успешно отправлена! Администратор проверит её в ближайшее время.');
+            
+            // Очистка полей
+            document.getElementById('app-name').value = '';
+            document.getElementById('app-avatar').value = '';
+            document.getElementById('app-price').value = '';
+            document.getElementById('app-portfolio').value = '';
+            document.getElementById('app-desc').value = '';
+            document.querySelectorAll('input[name="spec"]').forEach(cb => cb.checked = false);
+        }
+
+        // Рендер заявок в Админке
+        function renderApplications() {
+            const apps = getApplications();
+            const container = document.getElementById('applications-list');
+
+            if (apps.length === 0) {
+                container.innerHTML = '<p style="color: var(--hint); font-size: 13px;">Нет входящих заявок.</p>';
+                return;
+            }
+
+            container.innerHTML = apps.map(app => `
+                <div class="card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+                    <div class="artist-header">
+                        <img class="avatar" src="${app.avatar}" alt="Avatar">
+                        <div>
+                            <h4 style="margin: 0; font-size: 15px;">${app.name}</h4>
+                            <p style="color: var(--accent); font-size: 12px; margin: 2px 0;"><b>Цена:</b> ${app.price}</p>
+                        </div>
+                    </div>
+                    <div class="tags">
+                        ${app.specs.map(s => `<span class="tag">${s}</span>`).join('')}
+                    </div>
+                    <p style="color: var(--hint); font-size: 12px; margin: 6px 0;">${app.desc}</p>
+                    <a class="btn btn-secondary" href="${app.portfolio}" target="_blank" style="font-size: 12px; padding: 6px;">🔗 Открыть портфолио</a>
+                    
+                    <div class="action-btns">
+                        <button class="btn btn-success" onclick="approveApp(${app.id})">✅ Добавить</button>
+                        <button class="btn btn-danger" onclick="rejectApp(${app.id})">❌ Отклонить</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Одобрение заявки админом
+        function approveApp(appId) {
+            let apps = getApplications();
+            const appToApprove = apps.find(a => a.id === appId);
+
+            if (appToApprove) {
+                const creators = getApprovedCreators();
+                creators.push(appToApprove);
+                saveApprovedCreators(creators);
+
+                apps = apps.filter(a => a.id !== appId);
+                saveApplications(apps);
+
+                alert('Артист успешно добавлен на вкладку "Мастера"!');
+                renderApplications();
+            }
+        }
+
+        // Отклонение заявки админом
+        function rejectApp(appId) {
+            let apps = getApplications();
+            apps = apps.filter(a => a.id !== appId);
+            saveApplications(apps);
+
+            alert('Заявка отклонена.');
+            renderApplications();
+        }
+
+        // Отображение одобренных артистов на вкладке "Мастера"
+        function renderApprovedCreators() {
+            const creators = getApprovedCreators();
+            const container = document.getElementById('creators-list');
+            
+            let defaultCard = `
+                <div class="card">
+                    <div class="artist-header">
+                        <img class="avatar" src="https://via.placeholder.com/55" alt="Avatar">
+                        <div>
+                            <h3 style="margin: 0;">MAGNIUM2</h3>
+                            <p style="color: var(--accent); font-size: 12px; margin: 2px 0;"><b>Средний чек:</b> от 500₽</p>
+                        </div>
+                    </div>
+                    <div class="tags">
+                        <span class="tag">3D Modeler</span>
+                        <span class="tag">Skin Maker</span>
+                        <span class="tag">Builder</span>
+                    </div>
+                    <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">Делаю качественные 3D-модели в Blockbench и скины любой сложности.</p>
+                    <a class="btn btn-secondary" href="https://t.me/" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
+                    <button class="btn" onclick="startOrder('MAGNIUM2')">Заказать у него</button>
+                </div>
+            `;
+
+            const addedCards = creators.map(c => `
+                <div class="card">
+                    <div class="artist-header">
+                        <img class="avatar" src="${c.avatar}" alt="Avatar">
+                        <div>
+                            <h3 style="margin: 0;">${c.name}</h3>
+                            <p style="color: var(--accent); font-size: 12px; margin: 2px 0;"><b>Средний чек:</b> ${c.price}</p>
+                        </div>
+                    </div>
+                    <div class="tags">
+                        ${c.specs.map(s => `<span class="tag">${s}</span>`).join('')}
+                    </div>
+                    <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">${c.desc}</p>
+                    <a class="btn btn-secondary" href="${c.portfolio}" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
+                    <button class="btn" onclick="startOrder('${c.name}')">Заказать у него</button>
+                </div>
+            `).join('');
+
+            container.innerHTML = defaultCard + addedCards;
+        }
+
+        // Создание заказа
         function startOrder(artistName) {
             const orderId = Math.floor(1000 + Math.random() * 9000);
             const ordersList = document.getElementById('orders-list');
@@ -370,41 +533,8 @@
             alert('Заказ #' + orderId + ' создан! Перейдите во вкладку "Мои", чтобы написать артисту.');
         }
 
-        function sendArtistApplication() {
-            const name = document.getElementById('app-name').value.trim();
-            let avatar = document.getElementById('app-avatar').value.trim();
-            const price = document.getElementById('app-price').value.trim();
-            const portfolio = document.getElementById('app-portfolio').value.trim();
-            const desc = document.getElementById('app-desc').value.trim();
-            
-            let specs = [];
-            document.querySelectorAll('input[name="spec"]:checked').forEach(cb => specs.push(cb.value));
-
-            if (!name) { alert('Укажите ваше имя/ник!'); return; }
-            if (specs.length === 0) { alert('Выберите хотя бы одну специализацию!'); return; }
-            if (!price) { alert('Укажите среднюю цену!'); return; }
-            if (!portfolio) { alert('Укажите ссылку на портфолио!'); return; }
-
-            if (!avatar) avatar = userPhoto;
-
-            const applicationData = {
-                type: 'artist_application',
-                name: name,
-                avatar: avatar,
-                specs: specs,
-                price: price,
-                portfolio: portfolio,
-                desc: desc || 'Не указано'
-            };
-
-            try {
-                tg.sendData(JSON.stringify(applicationData));
-                alert('Заявка отправлена!');
-                tg.close();
-            } catch (e) {
-                alert('Заявка создана! (Для автоматической отправки боту открывайте приложение через кнопку в чате)');
-            }
-        }
+        // Первичный рендер при запуске
+        renderApprovedCreators();
     </script>
 </body>
 </html>
