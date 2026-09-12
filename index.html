@@ -7,13 +7,14 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg-color: #121212;
-      --card-bg: #1e1e1e;
+      --bg-color: #0b1120;
+      --card-bg: #151f32;
+      --input-bg: #0f172a;
       --accent: #38bdf8;
       --text: #ffffff;
-      --text-muted: #a1a1aa;
-      --btn-bg: #27272a;
+      --text-muted: #94a3b8;
       --danger: #ef4444;
+      --border: #1e293b;
     }
     * {
       box-sizing: border-box;
@@ -24,24 +25,43 @@
     body {
       background-color: var(--bg-color);
       color: var(--text);
-      padding-bottom: 80px;
+      padding: 16px;
     }
-    .header {
+    .header-title {
       text-align: center;
-      padding: 20px 16px 10px;
-    }
-    .header h1 {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
     }
-    .header p {
-      color: var(--text-muted);
+
+    /* Верхнее меню переключения */
+    .top-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    .nav-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--accent);
+      background: transparent;
+      color: var(--text);
+      font-weight: 600;
       font-size: 0.9rem;
-      margin-top: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
-    .content {
-      padding: 12px 16px;
+    .nav-btn.active {
+      background: var(--accent);
+      color: #000000;
     }
+
     .tab-content {
       display: none;
     }
@@ -52,27 +72,28 @@
     /* Карточки мастеров */
     .artist-card {
       background: var(--card-bg);
-      border-radius: 16px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
       padding: 16px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .artist-top {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .avatar-circle {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      background: #334155;
+      background: #1e293b;
       color: var(--accent);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: bold;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       flex-shrink: 0;
     }
     .artist-title h3 {
@@ -88,222 +109,171 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .tag {
-      background: #27272a;
+      background: #0f172a;
       color: var(--accent);
-      padding: 4px 10px;
-      border-radius: 8px;
+      padding: 4px 8px;
+      border-radius: 6px;
       font-size: 0.75rem;
-      font-weight: 600;
     }
     .artist-desc {
-      color: #d4d4d8;
-      font-size: 0.9rem;
+      color: var(--text-muted);
+      font-size: 0.88rem;
       line-height: 1.4;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .btn-action {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: block;
       width: 100%;
-      padding: 12px;
-      border-radius: 10px;
+      padding: 10px;
+      border-radius: 8px;
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
+      text-align: center;
       text-decoration: none;
       margin-bottom: 8px;
       border: none;
       cursor: pointer;
     }
     .btn-portfolio {
-      background: var(--btn-bg);
+      background: #1e293b;
       color: var(--text);
     }
     .btn-order {
-      background: #ffffff;
-      color: #000000;
+      background: var(--accent);
+      color: #000;
     }
     .btn-delete {
       background: var(--danger);
-      color: #ffffff;
+      color: #fff;
     }
 
-    /* Формы */
-    form {
+    /* Форма заявки */
+    .form-box {
       background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
       padding: 16px;
-      border-radius: 16px;
+    }
+    .form-title {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    form {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-bottom: 20px;
     }
     input, textarea {
-      background: #121212;
-      border: 1px solid #3f3f46;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
       color: #fff;
       padding: 12px;
-      border-radius: 10px;
-      font-size: 0.95rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
       outline: none;
+    }
+    input::placeholder, textarea::placeholder {
+      color: var(--text-muted);
     }
     .btn-submit {
       background: var(--accent);
       color: #000;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: 8px;
       font-weight: bold;
       border: none;
       cursor: pointer;
-    }
-
-    /* Нижнее меню */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #18181b;
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 0;
-      border-top: 1px solid #27272a;
-    }
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: var(--text-muted);
-      font-size: 0.7rem;
-      text-decoration: none;
-      cursor: pointer;
-    }
-    .nav-item .icon {
-      font-size: 1.2rem;
-      margin-bottom: 2px;
-    }
-    .nav-item.active {
-      color: var(--accent);
+      margin-top: 4px;
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>VANIX WorkShop</h1>
-    <p>Заказы Minecraft-услуг</p>
+  <div class="header-title">VANIX WorkShop</div>
+
+  <!-- Верхние кнопки переключения -->
+  <div class="top-nav">
+    <button class="nav-btn active" onclick="switchTab('artists', this)">🎨 Артисты</button>
+    <button class="nav-btn" onclick="switchTab('apply', this)">📝 Стать мастером</button>
+    <button id="admin-tab-btn" class="nav-btn" style="display:none;" onclick="switchTab('admin', this)">👑 Админ</button>
   </div>
 
-  <div class="content">
-    <!-- Вкладка: Главная -->
-    <div id="tab-home" class="tab-content">
-      <div style="text-align: center; padding: 40px 0; color: var(--text-muted);">
-        <h2>Добро пожаловать в VANIX WorkShop!</h2>
-        <p style="margin-top:10px;">Выберите нужный раздел в меню снизу.</p>
-      </div>
-    </div>
+  <!-- Вкладка: Артисты -->
+  <div id="tab-artists" class="tab-content active">
+    <div id="artists-container">Загрузка мастеров...</div>
+  </div>
 
-    <!-- Вкладка: Мастера -->
-    <div id="tab-masters" class="tab-content active">
-      <div id="masters-container">Загрузка мастеров...</div>
-    </div>
-
-    <!-- Вкладка: Заявка -->
-    <div id="tab-apply" class="tab-content">
+  <!-- Вкладка: Заявка на вступление -->
+  <div id="tab-apply" class="tab-content">
+    <div class="form-box">
+      <div class="form-title">Заявка на вступление</div>
       <form id="appForm">
-        <h3 style="text-align:center; margin-bottom:8px;">Подать заявку</h3>
         <input type="text" id="name" placeholder="Ваш никнейм" required>
-        <input type="text" id="price" placeholder="Средний чек (напр. от 500₽)" required>
+        <input type="text" id="price" placeholder="Средняя цена (напр. от 500₽)" required>
         <input type="url" id="portfolio" placeholder="Ссылка на портфолио" required>
         <input type="text" id="specs" placeholder="Специализации (через запятую)" required>
         <textarea id="desc" rows="3" placeholder="Описание ваших услуг" required></textarea>
         <button type="submit" class="btn-submit">Отправить заявку</button>
       </form>
     </div>
-
-    <!-- Разделы-заглушки -->
-    <div id="tab-my" class="tab-content"><p style="text-align:center; color:var(--text-muted);">Раздел "Мои" в разработке</p></div>
-    <div id="tab-profile" class="tab-content"><p style="text-align:center; color:var(--text-muted);">Раздел "Профиль" в разработке</p></div>
-
-    <!-- Вкладка: Админ-панель -->
-    <div id="tab-admin" class="tab-content">
-      <div id="admin-access-denied" style="display:none; text-align:center; color:var(--danger); padding:40px 0;">
-        ⛔ Доступ запрещен. Вы не являетесь администратором.
-      </div>
-
-      <div id="admin-panel" style="display:none;">
-        <h2 style="text-align:center; margin-bottom:16px;">👑 Админ-панель</h2>
-        
-        <!-- Форма прямого добавления мастера -->
-        <form id="adminAddForm">
-          <h3 style="text-align:center;">➕ Добавить мастера вручную</h3>
-          <input type="text" id="adm-name" placeholder="Никнейм мастера" required>
-          <input type="text" id="adm-price" placeholder="Средний чек (напр. от 500₽)" required>
-          <input type="url" id="adm-portfolio" placeholder="Ссылка на портфолио" required>
-          <input type="text" id="adm-specs" placeholder="Специализации (через запятую)" required>
-          <textarea id="adm-desc" rows="3" placeholder="Описание услуг" required></textarea>
-          <button type="submit" class="btn-submit">Добавить в базу</button>
-        </form>
-
-        <h3 style="margin:20px 0 12px;">Управление текущими мастерами:</h3>
-        <div id="admin-masters-list">Загрузка...</div>
-      </div>
-    </div>
   </div>
 
-  <!-- Нижняя навигация -->
-  <div class="bottom-nav">
-    <div class="nav-item" onclick="switchTab('home', this)"><span class="icon">🏠</span>Главная</div>
-    <div class="nav-item active" onclick="switchTab('masters', this)"><span class="icon">🎨</span>Мастера</div>
-    <div class="nav-item" onclick="switchTab('apply', this)"><span class="icon">📝</span>Заявка</div>
-    <div class="nav-item" onclick="switchTab('my', this)"><span class="icon">📋</span>Мои</div>
-    <div class="nav-item" onclick="switchTab('profile', this)"><span class="icon">👤</span>Профиль</div>
-    <div class="nav-item" onclick="switchTab('admin', this)"><span class="icon">👑</span>Админ</div>
+  <!-- Вкладка: Админ панель -->
+  <div id="tab-admin" class="tab-content">
+    <div class="form-box" style="margin-bottom: 20px;">
+      <div class="form-title">➕ Добавить мастера вручную</div>
+      <form id="adminAddForm">
+        <input type="text" id="adm-name" placeholder="Никнейм мастера" required>
+        <input type="text" id="adm-price" placeholder="Средняя цена (напр. от 500₽)" required>
+        <input type="url" id="adm-portfolio" placeholder="Ссылка на портфолио" required>
+        <input type="text" id="adm-specs" placeholder="Специализации (через запятую)" required>
+        <textarea id="adm-desc" rows="3" placeholder="Описание услуг" required></textarea>
+        <button type="submit" class="btn-submit">Добавить в базу</button>
+      </form>
+    </div>
+
+    <div class="form-title" style="margin-bottom:12px;">Управление мастерами:</div>
+    <div id="admin-artists-list">Загрузка...</div>
   </div>
 
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    const ADMIN_ID = 6955345877; // Твой Telegram ID
+    const ADMIN_ID = 6955345877;
     const userId = tg.initDataUnsafe?.user?.id;
 
-    function switchTab(tabId, el) {
+    // Показываем кнопку "Админ" только для тебя
+    if (userId === ADMIN_ID) {
+      document.getElementById('admin-tab-btn').style.display = 'flex';
+    }
+
+    function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-      
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
       document.getElementById('tab-' + tabId).classList.add('active');
-      if (el) el.classList.add('active');
+      if (btn) btn.classList.add('active');
 
       if (tabId === 'admin') {
-        checkAdminAccess();
+        loadAdminArtists();
       }
     }
 
-    function checkAdminAccess() {
-      if (userId === ADMIN_ID) {
-        document.getElementById('admin-panel').style.display = 'block';
-        document.getElementById('admin-access-denied').style.display = 'none';
-        loadAdminMasters();
-      } else {
-        document.getElementById('admin-panel').style.display = 'none';
-        document.getElementById('admin-access-denied').style.display = 'block';
-      }
-    }
-
-    // Загрузка мастеров для главной страницы
     async function loadArtists() {
-      const container = document.getElementById('masters-container');
+      const container = document.getElementById('artists-container');
       try {
         const res = await fetch('artists.json?cache=' + Date.now());
-        if (!res.ok) throw new Error("Файл не найден");
+        if (!res.ok) throw new Error();
         const artists = await res.json();
 
         if (artists.length === 0) {
-          container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Список мастеров пока пуст.</p>";
+          container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Список мастеров пуст.</p>";
           return;
         }
 
@@ -315,7 +285,7 @@
                 <div class="avatar-circle">${letter}</div>
                 <div class="artist-title">
                   <h3>${a.name}</h3>
-                  <div class="artist-price">Средний чек: ${a.price}</div>
+                  <div class="artist-price">${a.price}</div>
                 </div>
               </div>
               <div class="tags">
@@ -323,18 +293,17 @@
               </div>
               <div class="artist-desc">${a.desc}</div>
               <a href="${a.portfolio}" target="_blank" class="btn-action btn-portfolio">📁 Портфолио</a>
-              <button onclick="orderArtist('${a.name}')" class="btn-action btn-order">Заказать у него</button>
+              <button onclick="orderArtist('${a.name}')" class="btn-action btn-order">Заказать</button>
             </div>
           `;
         }).join('');
       } catch (e) {
-        container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Не удалось загрузить список мастеров.</p>";
+        container.innerHTML = "<p style='text-align:center; color:var(--text-muted);'>Не удалось загрузить мастеров.</p>";
       }
     }
 
-    // Загрузка мастеров для админ-панели с кнопками «Удалить»
-    async function loadAdminMasters() {
-      const container = document.getElementById('admin-masters-list');
+    async function loadAdminArtists() {
+      const container = document.getElementById('admin-artists-list');
       try {
         const res = await fetch('artists.json?cache=' + Date.now());
         const artists = await res.json();
@@ -356,13 +325,12 @@
           </div>
         `).join('');
       } catch (e) {
-        container.innerHTML = "<p style='color:var(--text-muted);'>Ошибка загрузки мастеров.</p>";
+        container.innerHTML = "<p style='color:var(--text-muted);'>Ошибка загрузки.</p>";
       }
     }
 
-    // Отправка команды на удаление мастера
     function deleteArtist(index, name) {
-      if (confirm(`Вы точно хотите удалить мастера ${name}?`)) {
+      if (confirm(`Удалить мастера ${name}?`)) {
         tg.sendData(JSON.stringify({
           action: 'admin_delete_artist',
           index: index,
@@ -372,7 +340,6 @@
       }
     }
 
-    // Отправка формы прямого добавления мастера
     document.getElementById('adminAddForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const payload = {
@@ -387,7 +354,6 @@
       tg.close();
     });
 
-    // Обычная заявка пользователя
     document.getElementById('appForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const payload = {
