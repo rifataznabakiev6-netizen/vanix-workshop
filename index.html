@@ -261,7 +261,7 @@
     <div class="nav-item" onclick="switchTab('apply', this)"><span class="icon">📝</span>Заявка</div>
     <div class="nav-item" onclick="switchTab('my', this)"><span class="icon">📋</span>Мои</div>
     <div class="nav-item" onclick="switchTab('profile', this)"><span class="icon">👤</span>Профиль</div>
-    <div id="admin-nav-item" class="nav-item" style="display:none;" onclick="switchTab('admin', this)"><span class="icon">👑</span>Админ</div>
+    <div id="admin-nav-btn" class="nav-item" style="display: none;" onclick="switchTab('admin', this)"><span class="icon">👑</span>Админ</div>
   </div>
 
   <script>
@@ -271,9 +271,10 @@
     const ADMIN_ID = 6955345877; // Твой Telegram ID
     const userId = tg.initDataUnsafe?.user?.id;
 
-    // Включаем кнопку админа только для твоего ID
+    // Показываем кнопку "Админ" в нижнем меню только владельцу
     if (userId === ADMIN_ID) {
-      document.getElementById('admin-nav-item').style.display = 'flex';
+      const adminBtn = document.getElementById('admin-nav-btn');
+      if (adminBtn) adminBtn.style.display = 'flex';
     }
 
     function switchTab(tabId, el) {
