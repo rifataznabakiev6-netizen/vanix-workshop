@@ -142,24 +142,6 @@
             border-radius: 6px;
         }
 
-        .social-links {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .social-btn {
-            flex: 1;
-            padding: 8px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--accent);
-            font-size: 12px;
-            font-weight: bold;
-        }
-
         nav {
             position: fixed;
             bottom: 0;
@@ -222,24 +204,7 @@
     <!-- 2. МАСТЕРА -->
     <div id="creators" class="tab-content">
         <div id="creators-list">
-            <!-- Начальный артист по умолчанию -->
-            <div class="card">
-                <div class="artist-header">
-                    <img class="avatar" src="https://via.placeholder.com/55" alt="Avatar">
-                    <div>
-                        <h3 style="margin: 0;">MAGNIUM2</h3>
-                        <p style="color: var(--accent); font-size: 12px; margin: 2px 0;"><b>Средний чек:</b> от 500₽</p>
-                    </div>
-                </div>
-                <div class="tags">
-                    <span class="tag">3D Modeler</span>
-                    <span class="tag">Skin Maker</span>
-                    <span class="tag">Builder</span>
-                </div>
-                <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">Делаю качественные 3D-модели в Blockbench и скины любой сложности.</p>
-                <a class="btn btn-secondary" href="https://t.me/" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
-                <button class="btn" onclick="startOrder('MAGNIUM2', 'https://t.me/MAGNIUM2')">Заказать у него</button>
-            </div>
+            <!-- Динамически загружается из хранилища -->
         </div>
     </div>
 
@@ -356,7 +321,7 @@
             if (tabId === 'creators') renderApprovedCreators();
         }
 
-        // Работа с локальным хранилищем (Заявки и Артисты)
+        // Хранилище (Заявки и Артисты)
         function getApplications() {
             return JSON.parse(localStorage.getItem('vanix_applications') || '[]');
         }
@@ -406,17 +371,14 @@
                 tgLink: tgLink
             };
 
-            // Передаем данные боту
             tg.sendData(JSON.stringify(payload));
 
-            // Сохранение локально для совместимости
             const apps = getApplications();
             apps.push(payload);
             saveApplications(apps);
 
             alert('✅ Заявка успешно отправлена! Администратор проверит её в ближайшее время.');
             
-            // Очистка полей
             document.getElementById('app-name').value = '';
             document.getElementById('app-avatar').value = '';
             document.getElementById('app-price').value = '';
@@ -458,7 +420,6 @@
             `).join('');
         }
 
-        // Одобрение заявки админом
         function approveApp(appId) {
             let apps = getApplications();
             const appToApprove = apps.find(a => a.id === appId);
@@ -476,7 +437,6 @@
             }
         }
 
-        // Отклонение заявки админом
         function rejectApp(appId) {
             let apps = getApplications();
             apps = apps.filter(a => a.id !== appId);
@@ -486,7 +446,6 @@
             renderApplications();
         }
 
-        // Удаление мастера (доступно только админу)
         function deleteCreator(creatorId) {
             if (confirm('Вы уверены, что хотите удалить этого мастера?')) {
                 let creators = getApprovedCreators();
@@ -497,33 +456,18 @@
             }
         }
 
-        // Отображение одобренных артистов на вкладке "Мастера"
+        // Отображение только динамически добавленных артистов
         function renderApprovedCreators() {
             const creators = getApprovedCreators();
             const container = document.getElementById('creators-list');
             const isAdmin = (currentUserId === String(ADMIN_ID) || !tg.initDataUnsafe || !tg.initDataUnsafe.user);
-            
-            let defaultCard = `
-                <div class="card">
-                    <div class="artist-header">
-                        <img class="avatar" src="https://via.placeholder.com/55" alt="Avatar">
-                        <div>
-                            <h3 style="margin: 0;">MAGNIUM2</h3>
-                            <p style="color: var(--accent); font-size: 12px; margin: 2px 0;"><b>Средний чек:</b> от 500₽</p>
-                        </div>
-                    </div>
-                    <div class="tags">
-                        <span class="tag">3D Modeler</span>
-                        <span class="tag">Skin Maker</span>
-                        <span class="tag">Builder</span>
-                    </div>
-                    <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">Делаю качественные 3D-модели в Blockbench и скины любой сложности.</p>
-                    <a class="btn btn-secondary" href="https://t.me/" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
-                    <button class="btn" onclick="startOrder('MAGNIUM2', 'https://t.me/MAGNIUM2')">Заказать у него</button>
-                </div>
-            `;
 
-            const addedCards = creators.map(c => `
+            if (creators.length === 0) {
+                container.innerHTML = '<p style="color: var(--hint); font-size: 13px; text-align: center; margin-top: 20px;">В списке пока нет мастеров.</p>';
+                return;
+            }
+
+            container.innerHTML = creators.map(c => `
                 <div class="card">
                     <div class="artist-header">
                         <img class="avatar" src="${c.avatar}" alt="Avatar">
@@ -541,11 +485,8 @@
                     ${isAdmin ? `<button class="btn btn-danger" style="margin-top: 8px;" onclick="deleteCreator(${c.id})">🗑 Удалить</button>` : ''}
                 </div>
             `).join('');
-
-            container.innerHTML = defaultCard + addedCards;
         }
 
-        // Создание заказа
         function startOrder(artistName, artistTgLink) {
             const orderId = Math.floor(1000 + Math.random() * 9000);
             const ordersList = document.getElementById('orders-list');
@@ -562,7 +503,6 @@
             alert('Заказ #' + orderId + ' создан! Перейдите во вкладку "Мои", чтобы написать артисту.');
         }
 
-        // Первичный рендер при запуске
         renderApprovedCreators();
     </script>
 </body>
