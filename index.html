@@ -238,7 +238,7 @@
                 </div>
                 <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">Делаю качественные 3D-модели в Blockbench и скины любой сложности.</p>
                 <a class="btn btn-secondary" href="https://t.me/" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
-                <button class="btn" onclick="startOrder('MAGNIUM2')">Заказать у него</button>
+                <button class="btn" onclick="startOrder('MAGNIUM2', 'https://t.me/MAGNIUM2')">Заказать у него</button>
             </div>
         </div>
     </div>
@@ -385,18 +385,31 @@
             if (!price) { alert('Укажите цену!'); return; }
             if (!portfolio) { alert('Укажите портфолио!'); return; }
 
-            const newApp = {
+            const user = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
+            const tgUserId = user ? user.id : 'Неизвестно';
+            const tgUsername = user && user.username ? '@' + user.username : 'Отсутствует';
+            const tgLink = user && user.username ? 'https://t.me/' + user.username : (user ? 'tg://user?id=' + user.id : 'https://t.me/');
+
+            const payload = {
+                action: 'new_artist_application',
                 id: Date.now(),
                 name: name,
                 avatar: avatar || userPhoto,
                 specs: specs,
                 price: price,
                 portfolio: portfolio,
-                desc: desc || 'Описание не указано'
+                desc: desc || 'Описание не указано',
+                tgUserId: tgUserId,
+                tgUsername: tgUsername,
+                tgLink: tgLink
             };
 
+            // Передаем данные боту
+            tg.sendData(JSON.stringify(payload));
+
+            // Сохранение локально для совместимости
             const apps = getApplications();
-            apps.push(newApp);
+            apps.push(payload);
             saveApplications(apps);
 
             alert('✅ Заявка успешно отправлена! Администратор проверит её в ближайшее время.');
@@ -492,7 +505,7 @@
                     </div>
                     <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">Делаю качественные 3D-модели в Blockbench и скины любой сложности.</p>
                     <a class="btn btn-secondary" href="https://t.me/" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
-                    <button class="btn" onclick="startOrder('MAGNIUM2')">Заказать у него</button>
+                    <button class="btn" onclick="startOrder('MAGNIUM2', 'https://t.me/MAGNIUM2')">Заказать у него</button>
                 </div>
             `;
 
@@ -510,7 +523,7 @@
                     </div>
                     <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">${c.desc}</p>
                     <a class="btn btn-secondary" href="${c.portfolio}" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
-                    <button class="btn" onclick="startOrder('${c.name}')">Заказать у него</button>
+                    <button class="btn" onclick="startOrder('${c.name}', '${c.tgLink || 'https://t.me/'}')">Заказать у него</button>
                 </div>
             `).join('');
 
@@ -518,16 +531,17 @@
         }
 
         // Создание заказа
-        function startOrder(artistName) {
+        function startOrder(artistName, artistTgLink) {
             const orderId = Math.floor(1000 + Math.random() * 9000);
             const ordersList = document.getElementById('orders-list');
+            const targetLink = artistTgLink || 'https://t.me/';
             
             ordersList.innerHTML = `
                 <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
                     <b>Заказ #${orderId}</b><br>
                     <span style="font-size: 12px; color: var(--hint);">Исполнитель: ${artistName}</span><br>
                     <span style="font-size: 12px; color: var(--accent);">Статус: В ожидании ответа</span>
-                    <a class="btn" style="margin-top: 8px; font-size: 12px; padding: 8px;" href="https://t.me/" target="_blank">💬 Написать артисту в ЛС</a>
+                    <a class="btn" style="margin-top: 8px; font-size: 12px; padding: 8px;" href="${targetLink}" target="_blank">💬 Написать артисту в ЛС</a>
                 </div>
             `;
             alert('Заказ #' + orderId + ' создан! Перейдите во вкладку "Мои", чтобы написать артисту.');
@@ -538,3 +552,4 @@
     </script>
 </body>
 </html>
+ 
