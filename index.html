@@ -326,10 +326,12 @@
 
         const ADMIN_ID = 6955345877;
         let userPhoto = "https://via.placeholder.com/55";
+        let currentUserId = null;
 
         // Загрузка данных пользователя
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
+            currentUserId = user.id;
             document.getElementById('user-name').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
             if (user.photo_url) {
                 userPhoto = user.photo_url;
@@ -484,10 +486,22 @@
             renderApplications();
         }
 
+        // Удаление мастера (доступно только админу)
+        function deleteCreator(creatorId) {
+            if (confirm('Вы уверены, что хотите удалить этого мастера?')) {
+                let creators = getApprovedCreators();
+                creators = creators.filter(c => c.id !== creatorId);
+                saveApprovedCreators(creators);
+                alert('Мастер удалён.');
+                renderApprovedCreators();
+            }
+        }
+
         // Отображение одобренных артистов на вкладке "Мастера"
         function renderApprovedCreators() {
             const creators = getApprovedCreators();
             const container = document.getElementById('creators-list');
+            const isAdmin = (currentUserId === ADMIN_ID || !tg.initDataUnsafe.user);
             
             let defaultCard = `
                 <div class="card">
@@ -524,6 +538,7 @@
                     <p style="color: var(--hint); font-size: 13px; margin: 8px 0;">${c.desc}</p>
                     <a class="btn btn-secondary" href="${c.portfolio}" target="_blank" style="margin-bottom: 8px;">📁 Портфолио</a>
                     <button class="btn" onclick="startOrder('${c.name}', '${c.tgLink || 'https://t.me/'}')">Заказать у него</button>
+                    ${isAdmin ? `<button class="btn btn-danger" style="margin-top: 8px;" onclick="deleteCreator(${c.id})">🗑 Удалить</button>` : ''}
                 </div>
             `).join('');
 
