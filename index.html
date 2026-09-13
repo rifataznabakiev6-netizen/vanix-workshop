@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VANIX Workshop</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Подключение SDK Firebase (Compat версии) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <style>
         :root {
             --bg: var(--tg-theme-bg-color, #121212);
@@ -203,9 +208,7 @@
 
     <!-- 2. МАСТЕРА -->
     <div id="creators" class="tab-content">
-        <div id="creators-list">
-            <!-- Динамически загружается из хранилища -->
-        </div>
+        <div id="creators-list"></div>
     </div>
 
     <!-- 3. ЗАЯВКА НА АРТИСТА -->
@@ -270,7 +273,7 @@
             <h3 style="color: var(--accent); margin-top: 0;">👑 Панель Администратора</h3>
             <p style="color: var(--hint); font-size: 13px;">Входящие заявки от артистов:</p>
             <div id="applications-list">
-                <p style="color: var(--hint); font-size: 13px;">Нет входящих заявок.</p>
+                <p style="color: var(--hint); font-size: 13px;">Загрузка заявка...</p>
             </div>
         </div>
     </div>
@@ -286,6 +289,19 @@
     </nav>
 
     <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyC6qqE-BBtK5cYwK7oGs4zaxmnVHu-zD3I",
+          authDomain: "vanix-workshop.firebaseapp.com",
+          databaseURL: "https://vanix-workshop-default-rtdb.firebaseio.com",
+          projectId: "vanix-workshop",
+          storageBucket: "vanix-workshop.firebasestorage.app",
+          messagingSenderId: "738104153913",
+          appId: "1:738104153913:web:318bd2654be5f4a68a7ae8"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         const tg = window.Telegram.WebApp;
         tg.expand();
 
@@ -293,7 +309,6 @@
         let userPhoto = "https://via.placeholder.com/55";
         let currentUserId = null;
 
-        // Загрузка данных пользователя
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
             currentUserId = String(user.id);
@@ -309,34 +324,15 @@
             document.getElementById('admin-nav').style.display = 'flex';
         }
 
-        // Переключение вкладок
         function showTab(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             
             document.getElementById(tabId).classList.add('active');
             btn.classList.add('active');
-
-            if (tabId === 'admin') renderApplications();
-            if (tabId === 'creators') renderApprovedCreators();
         }
 
-        // Хранилище (Заявки и Артисты)
-        function getApplications() {
-            return JSON.parse(localStorage.getItem('vanix_applications') || '[]');
-        }
-        function saveApplications(apps) {
-            localStorage.setItem('vanix_applications', JSON.stringify(apps));
-        }
-
-        function getApprovedCreators() {
-            return JSON.parse(localStorage.getItem('vanix_approved_creators') || '[]');
-        }
-        function saveApprovedCreators(creators) {
-            localStorage.setItem('vanix_approved_creators', JSON.stringify(creators));
-        }
-
-        // Подача заявки пользователем
+        // Подача заявки артистом
         function sendArtistApplication() {
             const name = document.getElementById('app-name').value.trim();
             let avatar = document.getElementById('app-avatar').value.trim();
@@ -357,9 +353,9 @@
             const tgUsername = user && user.username ? '@' + user.username : 'Отсутствует';
             const tgLink = user && user.username ? 'https://t.me/' + user.username : (user ? 'tg://user?id=' + user.id : 'https://t.me/');
 
+            const appId = Date.now();
             const payload = {
-                action: 'new_artist_application',
-                id: Date.now(),
+                id: appId,
                 name: name,
                 avatar: avatar || userPhoto,
                 specs: specs,
@@ -371,32 +367,32 @@
                 tgLink: tgLink
             };
 
-            tg.sendData(JSON.stringify(payload));
-
-            const apps = getApplications();
-            apps.push(payload);
-            saveApplications(apps);
-
-            alert('✅ Заявка успешно отправлена! Администратор проверит её в ближайшее время.');
-            
-            document.getElementById('app-name').value = '';
-            document.getElementById('app-avatar').value = '';
-            document.getElementById('app-price').value = '';
-            document.getElementById('app-portfolio').value = '';
-            document.getElementById('app-desc').value = '';
-            document.querySelectorAll('input[name="spec"]').forEach(cb => cb.checked = false);
+            db.ref('applications/' + appId).set(payload, (error) => {
+                if (error) {
+                    alert('Ошибка при отправке заявки в базу.');
+                } else {
+                    alert('✅ Заявка успешно отправлена! Администратор проверит её.');
+                    document.getElementById('app-name').value = '';
+                    document.getElementById('app-avatar').value = '';
+                    document.getElementById('app-price').value = '';
+                    document.getElementById('app-portfolio').value = '';
+                    document.getElementById('app-desc').value = '';
+                    document.querySelectorAll('input[name="spec"]').forEach(cb => cb.checked = false);
+                }
+            });
         }
 
-        // Рендер заявок в Админке
-        function renderApplications() {
-            const apps = getApplications();
+        // Синхронизация заявок для админа в режиме реального времени
+        db.ref('applications').on('value', (snapshot) => {
             const container = document.getElementById('applications-list');
-
-            if (apps.length === 0) {
+            const data = snapshot.val();
+            
+            if (!data) {
                 container.innerHTML = '<p style="color: var(--hint); font-size: 13px;">Нет входящих заявок.</p>';
                 return;
             }
 
+            const apps = Object.values(data);
             container.innerHTML = apps.map(app => `
                 <div class="card" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
                     <div class="artist-header">
@@ -418,55 +414,46 @@
                     </div>
                 </div>
             `).join('');
-        }
+        });
 
         function approveApp(appId) {
-            let apps = getApplications();
-            const appToApprove = apps.find(a => a.id === appId);
-
-            if (appToApprove) {
-                const creators = getApprovedCreators();
-                creators.push(appToApprove);
-                saveApprovedCreators(creators);
-
-                apps = apps.filter(a => a.id !== appId);
-                saveApplications(apps);
-
-                alert('Артист успешно добавлен на вкладку "Мастера"!');
-                renderApplications();
-            }
+            db.ref('applications/' + appId).once('value', (snapshot) => {
+                const appData = snapshot.val();
+                if (appData) {
+                    db.ref('creators/' + appId).set(appData, () => {
+                        db.ref('applications/' + appId).remove();
+                        alert('Артист успешно добавлен на вкладку "Мастера" у всех пользователей!');
+                    });
+                }
+            });
         }
 
         function rejectApp(appId) {
-            let apps = getApplications();
-            apps = apps.filter(a => a.id !== appId);
-            saveApplications(apps);
-
-            alert('Заявка отклонена.');
-            renderApplications();
+            db.ref('applications/' + appId).remove(() => {
+                alert('Заявка отклонена.');
+            });
         }
 
         function deleteCreator(creatorId) {
             if (confirm('Вы уверены, что хотите удалить этого мастера?')) {
-                let creators = getApprovedCreators();
-                creators = creators.filter(c => c.id !== creatorId);
-                saveApprovedCreators(creators);
-                alert('Мастер удалён.');
-                renderApprovedCreators();
+                db.ref('creators/' + creatorId).remove(() => {
+                    alert('Мастер удалён.');
+                });
             }
         }
 
-        // Отображение только динамически добавленных артистов
-        function renderApprovedCreators() {
-            const creators = getApprovedCreators();
+        // Синхронизация списка мастеров для ВСЕХ ПОЛЬЗОВАТЕЛЕЙ
+        db.ref('creators').on('value', (snapshot) => {
             const container = document.getElementById('creators-list');
+            const data = snapshot.val();
             const isAdmin = (currentUserId === String(ADMIN_ID) || !tg.initDataUnsafe || !tg.initDataUnsafe.user);
 
-            if (creators.length === 0) {
+            if (!data) {
                 container.innerHTML = '<p style="color: var(--hint); font-size: 13px; text-align: center; margin-top: 20px;">В списке пока нет мастеров.</p>';
                 return;
             }
 
+            const creators = Object.values(data);
             container.innerHTML = creators.map(c => `
                 <div class="card">
                     <div class="artist-header">
@@ -485,7 +472,7 @@
                     ${isAdmin ? `<button class="btn btn-danger" style="margin-top: 8px;" onclick="deleteCreator(${c.id})">🗑 Удалить</button>` : ''}
                 </div>
             `).join('');
-        }
+        });
 
         function startOrder(artistName, artistTgLink) {
             const orderId = Math.floor(1000 + Math.random() * 9000);
@@ -502,8 +489,6 @@
             `;
             alert('Заказ #' + orderId + ' создан! Перейдите во вкладку "Мои", чтобы написать артисту.');
         }
-
-        renderApprovedCreators();
     </script>
 </body>
 </html>
