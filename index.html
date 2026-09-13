@@ -417,16 +417,23 @@
         });
 
         function approveApp(appId) {
-            db.ref('applications/' + appId).once('value', (snapshot) => {
-                const appData = snapshot.val();
-                if (appData) {
-                    db.ref('creators/' + appId).set(appData, () => {
-                        db.ref('applications/' + appId).remove();
-                        alert('Артист успешно добавлен на вкладку "Мастера" у всех пользователей!');
-                    });
+    db.ref('applications/' + appId).once('value', (snapshot) => {
+        const appData = snapshot.val();
+        if (appData) {
+            // Переносим данные в ветку creators
+            db.ref('creators/' + appId).set(appData, (error) => {
+                if (error) {
+                    alert('Ошибка при сохранении мастера: ' + error.message);
+                } else {
+                    // Удаляем из заявок только после успешного сохранения
+                    db.ref('applications/' + appId).remove();
+                    alert('Артист успешно добавлен на вкладку "Мастера"!');
                 }
             });
         }
+    });
+}
+
 
         function rejectApp(appId) {
             db.ref('applications/' + appId).remove(() => {
