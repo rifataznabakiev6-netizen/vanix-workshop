@@ -331,13 +331,13 @@
         // Загрузка данных пользователя
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             const user = tg.initDataUnsafe.user;
-            currentUserId = user.id;
+            currentUserId = String(user.id);
             document.getElementById('user-name').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
             if (user.photo_url) {
                 userPhoto = user.photo_url;
                 document.getElementById('user-avatar').src = user.photo_url;
             }
-            if (user.id === ADMIN_ID) {
+            if (String(user.id) === String(ADMIN_ID)) {
                 document.getElementById('admin-nav').style.display = 'flex';
             }
         } else {
@@ -501,7 +501,7 @@
         function renderApprovedCreators() {
             const creators = getApprovedCreators();
             const container = document.getElementById('creators-list');
-            const isAdmin = (currentUserId === ADMIN_ID || !tg.initDataUnsafe.user);
+            const isAdmin = (currentUserId === String(ADMIN_ID) || !tg.initDataUnsafe || !tg.initDataUnsafe.user);
             
             let defaultCard = `
                 <div class="card">
